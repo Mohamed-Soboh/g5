@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 public class ShowOrderController {
 
 	public void start(Stage primaryStage) throws Exception {
+		//set header of page
 		Label Additionslbl=new Label("Your Order");
 		Additionslbl.setTextFill(Color.web("#eb8b00"));
 		Additionslbl.setFont(new Font("Arial", 35));
@@ -29,6 +30,7 @@ public class ShowOrderController {
 		Font font = Font.font("Arial", 23);
 		Font font2 = Font.font("Arial", 20);
 		
+		//view users order total price
 		Label Sum=new Label("Total Price: "+String.valueOf(AdditionsController.OverAllSum)+"$");
 		Sum.setTextFill(Color.web("#eb8b00"));
 		Sum.setFont(new Font("Arial", 35));
@@ -42,6 +44,7 @@ public class ShowOrderController {
 		hbox.setTranslateX(10);
 		hbox.setTranslateY(140);
 
+		//show salads picked
 		VBox saladBox = new VBox(5);
 		saladBox.setPrefSize(200, 360);
 		Label saladlbl = new Label(" Salad");
@@ -58,7 +61,7 @@ public class ShowOrderController {
 		saladlbl.setTranslateX(10);
 		saladlbl.setTranslateY(100);
 		
-		
+		//show mainDishes picked
 		VBox mainDishBox = new VBox(5);
 		mainDishBox.setPrefSize(200, 360);
 		mainDishBox.setStyle("-fx-background-color: #707070");
@@ -75,14 +78,15 @@ public class ShowOrderController {
 		mainDishlbl.setTranslateX(240);
 		mainDishlbl.setTranslateY(100);
 
-		VBox vbox3 = new VBox(5);
-		vbox3.setPrefSize(200, 360);
-		vbox3.setStyle("-fx-background-color: #707070");
+		//show desserts picked
+		VBox dessertBox = new VBox(5);
+		dessertBox.setPrefSize(200, 360);
+		dessertBox.setStyle("-fx-background-color: #707070");
 		Label dessertlbl = new Label(" Dessert");
 		dessertlbl.setFont(font1);
 		dessertlbl.setTextFill(Color.web("#eb8b00"));
-		ScrollPane dessertPane = new ScrollPane(vbox3);
-		dessertPane.setContent(vbox3);
+		ScrollPane dessertPane = new ScrollPane(dessertBox);
+		dessertPane.setContent(dessertBox);
 		dessertPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // never show a vertical ScrollBar
 		dessertPane.setFitToWidth(true); // set content width to viewport width
 		dessertPane.setPannable(true); // allow scrolling via mouse dragging
@@ -91,6 +95,7 @@ public class ShowOrderController {
 		dessertlbl.setTranslateX(465);
 		dessertlbl.setTranslateY(100);
 
+		//show drinks picked
 		VBox drinkBox = new VBox(5);
 		drinkBox.setPrefSize(200, 360);
 		drinkBox.setStyle("-fx-background-color: #707070");
@@ -107,15 +112,14 @@ public class ShowOrderController {
 		drinklbl.setTranslateX(690);
 		drinklbl.setTranslateY(100);
 		
-        
+        //set meals font and color to gui
 		for (int j = 0, salads=1, main=1, dessert=1, drinks=1,temp=0; j < AdditionsController.arlist.size(); j++) {
-       
-			//Label lbl = new Label(AdditionsController.arlist.get(j).getItem().getItem_Name());
+
 			Label lbl=new Label();
 			lbl.setFont(font);
 			lbl.setTextFill(Color.web("#eb8b00"));
 			if (AdditionsController.arlist.get(j).getItem().getCat().name().equals("Salad")) {
-				 lbl.setText(salads+" "+AdditionsController.arlist.get(j).getItem().getItem_Name());
+				lbl.setText(salads+" "+AdditionsController.arlist.get(j).getItem().getItem_Name());
 				saladBox.getChildren().addAll(lbl);
 				salads++;
 			} else if (AdditionsController.arlist.get(j).getItem().getCat().name().equals("MainDish")) {
@@ -124,7 +128,7 @@ public class ShowOrderController {
 				main++;
 			} else if (AdditionsController.arlist.get(j).getItem().getCat().name().equals("Dessert")) {
 				lbl.setText(dessert+" "+AdditionsController.arlist.get(j).getItem().getItem_Name());
-				vbox3.getChildren().add(lbl);
+				dessertBox.getChildren().add(lbl);
 				dessert++;
 			} else {
 				lbl.setText(drinks+" "+AdditionsController.arlist.get(j).getItem().getItem_Name());
@@ -132,11 +136,13 @@ public class ShowOrderController {
 				drinks++;
 			}
 			
+			//set additions font and color to gui
 			CheckBox[] c = AdditionsController.arlist.get(j).getCB();
 			for (int k = 0; k < c.length; k++) {
 				Label lbl2 = new Label(c[k].getText());
 				if (c[k].isSelected()) {
 					lbl2.setFont(font2);
+					lbl2.setTextFill(Color.web("#eb8b00"));
 					if (AdditionsController.arlist.get(j).getItem().getCat().name().equals("Salad"))
 					{
 						saladBox.getChildren().add(lbl2);
@@ -147,7 +153,7 @@ public class ShowOrderController {
 					}
 					else if (AdditionsController.arlist.get(j).getItem().getCat().name().equals("Dessert"))
 					{
-						drinkBox.getChildren().add(lbl2);
+						dessertBox.getChildren().add(lbl2);
 					} 
 					else {
 						drinkBox.getChildren().add(lbl2);
@@ -166,8 +172,7 @@ public class ShowOrderController {
 
 		submitBtn.setOnAction(ChooseTypeOfOrderPage);
 		backBtn.setOnAction(backToAdditionsController);
-		Label lbl = new Label(String.valueOf(AdditionsController.OverAllSum));
-
+		
 		hbox.getChildren().addAll(saladPane, mainDishPane, dessertPane, drinkPane);
 		pane.getChildren().addAll(saladlbl,mainDishlbl,dessertlbl,drinklbl);
 		pane.getChildren().addAll(submitBtn, backBtn, hbox);
@@ -181,6 +186,7 @@ public class ShowOrderController {
 		primaryStage.show();
 	}
 
+	//go to delivery/pickup options page
 	EventHandler<ActionEvent> ChooseTypeOfOrderPage = new EventHandler<ActionEvent>() {
 		public void handle(ActionEvent e) {
 
@@ -195,7 +201,8 @@ public class ShowOrderController {
 			}
 		}
 	};
-
+	
+	//go back to additions page
 	EventHandler<ActionEvent> backToAdditionsController = new EventHandler<ActionEvent>() {
 		public void handle(ActionEvent e) {
 
@@ -206,7 +213,7 @@ public class ShowOrderController {
 			try {
 			
 				AdditionsController.stageAdditions.show();
-				//AC.start(primaryStage);
+				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

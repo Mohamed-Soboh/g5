@@ -16,7 +16,17 @@
 	<children>
 		<AnchorPane prefHeight="657.0" prefWidth="1183.0" style="-fx-background-color: #555555;">
 			<children>
-				<Button layoutX="14.0" layoutY="650.0" mnemonicParsing="false" onAction="#logOut" prefHeight="54.0" prefWidth="65.0" style="-fx-background-color: #555555;">
+				<Text fill="WHITE" layoutX="32.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Maneger">
+					<font>
+						<Font name="System Bold" size="25.0" />
+					</font>
+				</Text>
+				<Text fx:id="HRusername" fill="WHITE" layoutX="153.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="217.0">
+					<font>
+						<Font name="System Bold" size="25.0" />
+					</font>
+				</Text>
+				<Button layoutX="1089.0" layoutY="10.0" mnemonicParsing="false" onAction="#logOut" prefHeight="54.0" prefWidth="65.0" style="-fx-background-color: #555555;">
 					<graphic>
 						<ImageView fitHeight="54.0" fitWidth="65.0">
 							<image>
@@ -25,15 +35,15 @@
 						</ImageView>
 					</graphic>
 				</Button>
-				<TableView fx:id="table" layoutX="91.0" layoutY="144.0" prefHeight="454.0" prefWidth="520.0">
+				<TableView fx:id="table" layoutX="138.0" layoutY="146.0" prefHeight="413.0" prefWidth="517.0">
 					<columns>
 						<TableColumn fx:id="IDcl" prefWidth="166.0" text="Restaurant ID" />
 						<TableColumn fx:id="resnamecl" prefWidth="171.0" text="Restaurant Name" />
 						<TableColumn fx:id="locationcl" prefWidth="184.0" text="Location" />
 					</columns>
 				</TableView>
-				<TextField fx:id="getID" layoutX="781.0" layoutY="223.0" prefHeight="31.0" prefWidth="217.0" promptText="Enter Restaurant ID" />
-				<Button layoutX="947.0" layoutY="371.0" mnemonicParsing="false" onAction="#AcceptBT" prefHeight="39.0" prefWidth="177.0" style="-fx-background-color: #228B22;" text="Accept">
+				<TextField fx:id="getID" layoutX="797.0" layoutY="192.0" prefHeight="31.0" prefWidth="217.0" promptText="Enter ID" />
+				<Button layoutX="937.0" layoutY="343.0" mnemonicParsing="false" onAction="#AcceptBT" prefHeight="39.0" prefWidth="177.0" style="-fx-background-color: #228B22;" text="Accept">
 					<font>
 						<Font name="System Bold" size="18.0" />
 					</font>
@@ -46,12 +56,12 @@
 						<Font name="System Bold" size="22.0" />
 					</font>
 				</Text>
-				<Text fill="WHITE" layoutX="398.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Register\Accept Restaurant" wrappingWidth="469.79296875">
+				<Text fill="WHITE" layoutX="397.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create\Accept Restaurant" wrappingWidth="431.79296875">
 					<font>
 						<Font name="System Bold" size="34.0" />
 					</font>
 				</Text>
-				<Button layoutX="713.0" layoutY="371.0" mnemonicParsing="false" onAction="#ResetBT" prefHeight="39.0" prefWidth="177.0" style="-fx-background-color: white;" text="Reset">
+				<Button layoutX="720.0" layoutY="343.0" mnemonicParsing="false" onAction="#ResetBT" prefHeight="39.0" prefWidth="177.0" style="-fx-background-color: white;" text="Reset">
 					<font>
 						<Font name="System Bold" size="18.0" />
 					</font>
@@ -59,18 +69,13 @@
 						<InnerShadow />
 					</effect>
 				</Button>
-				<Text fill="WHITE" layoutX="747.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Register New Restaurant :">
+				<Text fill="WHITE" layoutX="755.0" layoutY="163.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create New Restaurant :">
 					<font>
 						<Font name="System Bold" size="25.0" />
 					</font>
 				</Text>
-            <TextField fx:id="getRustaurantname" layoutX="781.0" layoutY="261.0" prefHeight="31.0" prefWidth="217.0" promptText="Enter Restaurant Name" />
-            <ComboBox fx:id="Locationco" layoutX="781.0" layoutY="299.0" prefHeight="31.0" prefWidth="217.0" />
-            <Text fx:id="pathtext" fill="WHITE" layoutX="14.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="606.6708984375">
-               <font>
-                  <Font name="System Bold" size="17.0" />
-               </font>
-            </Text>
+            <TextField fx:id="getRustaurantname" layoutX="797.0" layoutY="238.0" prefHeight="31.0" prefWidth="217.0" promptText="Enter Restaurant Name" />
+            <ComboBox fx:id="Locationco" layoutX="799.0" layoutY="282.0" prefHeight="31.0" prefWidth="217.0" />
 			</children>
 		</AnchorPane>
 	</children>

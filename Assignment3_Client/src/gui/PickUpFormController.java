@@ -40,6 +40,7 @@ public class PickUpFormController implements Initializable {
 	public static boolean Pickup;
 
 	@FXML
+	//go back to choose delivery type option
 	void Back(ActionEvent event) throws Exception {
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.close();
@@ -49,28 +50,32 @@ public class PickUpFormController implements Initializable {
 	}
 
 	@FXML
+	//go to payment page
 	void Go_to_payment(ActionEvent event) throws Exception {
-	
-
+		
+		//if any field left empty pops a message to user
 		if (datetxt.getValue() == (null) || hourtxt.getSelectionModel().isEmpty()
 				|| minutetxt.getSelectionModel().isEmpty()) {
 			errtxt.setText("Enter Information");
 			return;
 		}
 		
+		//take current date and hour
 		SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date(); // given date
 		Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
 		calendar.setTime(date); // assigns calendar to given date
 		int hours = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
 		int minutes = calendar.get(Calendar.MINUTE);
-
+		
+		//take picked date and hour from user
 		String pickedDate = datetxt.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		Date CurrentDate = sdformat.parse(NormalUserHomePageController.sClock);
 		Date picked_Date = sdformat.parse(pickedDate);
 		int hour = Integer.parseInt(hourtxt.getValue());
 		int minute = Integer.parseInt(minutetxt.getValue());
 		
+		//check if picked date and hour is legal
 		if ((hours < hour && CurrentDate.compareTo(picked_Date) == 0) || (minutes < minute && hours == hour && CurrentDate.compareTo(picked_Date) == 0)
 				|| CurrentDate.compareTo(picked_Date) < 0) {
 
@@ -79,8 +84,6 @@ public class PickUpFormController implements Initializable {
 			Pickup = true;
 		} 
 		else {
-
-
 			errtxt.setText("Enter a valid date");
 			return;
 		}
@@ -107,6 +110,7 @@ public class PickUpFormController implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
+		//initialize hours from 0-23
 		int i;
 		for (i = 0; i < 24; i++) {
 			if (i < 10)
@@ -114,7 +118,8 @@ public class PickUpFormController implements Initializable {
 			else
 				hourtxt.getItems().add(String.valueOf(i));
 		}
-
+		
+		//initialize minutes from 0-59
 		for (i = 0; i < 60; i++) {
 			if (i < 10)
 				minutetxt.getItems().add("0" + i);

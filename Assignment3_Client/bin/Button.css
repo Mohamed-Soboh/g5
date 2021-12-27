@@ -1,0 +1,45 @@
+.button-green
+{
+	-fx-background-color:#d39b4b;
+	-fx-background-radius:30 30 30 30;
+}
+.button-green:hover
+{
+	-fx-background-color:#C48320;
+	-fx-background-radius:30 30 30 30;
+}
+.button-green:pressed
+{
+	-fx-background-color:green;
+	-fx-background-radius:30 30 30 30;
+}
+.button-red
+{
+	-fx-background-color:#d39b4b;
+	-fx-background-radius:30 30 30 30;
+}
+.button-red:hover
+{
+	-fx-background-color:#C48320;
+	-fx-background-radius:30 30 30 30;
+}
+.button-red:pressed
+{
+	-fx-background-color:red;
+	-fx-background-radius:30 30 30 30;
+}
+.button
+{
+	-fx-background-color:#d39b4b;
+	-fx-background-radius:30 30 30 30;
+}
+.button:hover
+{
+	-fx-background-color:#C48320;
+	-fx-background-radius:30 30 30 30;
+}
+.button:pressed
+{
+	-fx-background-color:#d39b4b;
+	-fx-background-radius:30 30 30 30;
+}

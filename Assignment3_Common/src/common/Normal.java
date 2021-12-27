@@ -2,20 +2,7 @@ package common;
 
 import java.io.Serializable;
 
-/**
- * @author moham
- *
- */
 public class Normal implements Serializable{
-	public Normal(String iD, String firstName, String lastName, String email, String phoneNumber, int visaIsAvailable) {
-		super();
-		ID = iD;
-		FirstName = firstName;
-		LastName = lastName;
-		Email = email;
-		PhoneNumber = phoneNumber;
-		VisaIsAvailable = visaIsAvailable;
-	}
 	/**
 	 * 
 	 */
@@ -36,6 +23,15 @@ public class Normal implements Serializable{
 		PhoneNumber = phoneNumber;
 		VisaIsAvailable = visaIsAvailable;
 		W4C = w4c;
+	}
+	
+	public Normal(String iD, String firstName, String lastName, String email, String phoneNumber) {
+		super();
+		ID = iD;
+		FirstName = firstName;
+		LastName = lastName;
+		Email = email;
+		PhoneNumber = phoneNumber;
 	}
 	public String getID() {
 		return ID;

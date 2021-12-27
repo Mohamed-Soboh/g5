@@ -1,12 +1,7 @@
 package gui;
 
-import java.awt.Checkbox;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import common.Item;
 import common.ViewOrderDetails;
 import javafx.event.ActionEvent;
@@ -25,7 +20,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class AdditionsController {
@@ -37,6 +31,7 @@ public class AdditionsController {
 
 
 	public void start(Stage primaryStage) throws Exception {
+		//header of the page
 		Label Additionslbl=new Label("Pick additions to your meal");
 		Additionslbl.setTextFill(Color.web("#eb8b00"));
 		Additionslbl.setFont(new Font("Arial", 35));
@@ -54,7 +49,7 @@ public class AdditionsController {
 		hbox.setTranslateX(10);
 		hbox.setTranslateY(140);
 		
-		
+		//create salad menu additions
 		VBox saladBox = new VBox(5);
 		saladBox.setPrefSize(200, 360);
 		Label saladlbl=new Label(" Salad");
@@ -71,7 +66,7 @@ public class AdditionsController {
 		saladlbl.setTranslateX(10);
 		saladlbl.setTranslateY(100);
 		
-		
+		//create mainDish menu additions
 		VBox mainDishBox = new VBox(5);
 		mainDishBox.setPrefSize(200, 360);
 		mainDishBox.setStyle("-fx-background-color: #707070");	
@@ -88,6 +83,7 @@ public class AdditionsController {
 		mainDishlbl.setTranslateX(240);
 		mainDishlbl.setTranslateY(100);
 		
+		//create dessert menu additions
 		VBox dessertBox = new VBox(5);
 		dessertBox.setPrefSize(200, 360);
 		dessertBox.setStyle("-fx-background-color: #707070");
@@ -104,7 +100,7 @@ public class AdditionsController {
 		dessertlbl.setTranslateX(465);
 		dessertlbl.setTranslateY(100);
 
-		
+		//create drinks menu additions
 		VBox drinkBox = new VBox(5);
 		drinkBox.setPrefSize(200, 360);
 		drinkBox.setStyle("-fx-background-color: #707070");
@@ -129,6 +125,7 @@ public class AdditionsController {
 
 		int i = 0;
 		arlist = new ArrayList<ViewOrderDetails>();
+		//add additions to gui and category
 		for (Item it : RestaurantController.spinners.keySet()) {
 
 			Spinner<Integer> spin = (Spinner<Integer>) RestaurantController.spinners.get(it);
@@ -140,7 +137,7 @@ public class AdditionsController {
 					CB[j].setFont(font2);
 					CB[j].setTextFill(Color.web("#eb8b00"));
 				}
-				OverAllSum += it.getPrice();
+				OverAllSum += it.getPrice();//calculate price of picked items
 			
 				ViewOrderDetails VOD = new ViewOrderDetails(CB, it);
 				arlist.add(VOD);
@@ -184,6 +181,7 @@ public class AdditionsController {
 		primaryStage.show();
 	}
 
+	//go back to restaurant menu
 	EventHandler<ActionEvent> backToRestaurantController = new EventHandler<ActionEvent>() {
 		public void handle(ActionEvent e) {
 			stageAdditions = (Stage) ((Node) e.getSource()).getScene().getWindow();
@@ -201,6 +199,7 @@ public class AdditionsController {
 		}
 	};
 
+	//show users order
 	EventHandler<ActionEvent> ShowOrder = new EventHandler<ActionEvent>() {
 		public void handle(ActionEvent e) {
 			 stageAdditions = (Stage) ((Node) e.getSource()).getScene().getWindow();

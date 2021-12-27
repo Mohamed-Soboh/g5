@@ -1,6 +1,12 @@
 package common;
 
-public class Delivery {
+import java.io.Serializable;
+
+public class Delivery implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String firstname;
 	private String phonenumber;
 	private String address;
@@ -9,9 +15,19 @@ public class Delivery {
 	private String hour;
 	private String minute;
 	private String clientText;
+	private int orderNum;
+	private int deliveryNum;
 	
+	public int getDeliveryNum() {
+		return deliveryNum;
+	}
+
+	public void setDeliveryNum(int deliveryNum) {
+		this.deliveryNum = deliveryNum;
+	}
+
 	public Delivery(String firstname, String phonenumber, String address, String deliveryType, String date, String hour,
-			String minute, String clientText) {
+			String minute, String clientText,int orderNum) {
 		this.firstname = firstname;
 		this.phonenumber = phonenumber;
 		this.address = address;
@@ -20,6 +36,15 @@ public class Delivery {
 		this.hour = hour;
 		this.minute = minute;
 		this.clientText = clientText;
+		this.orderNum=orderNum;
+	}
+
+	public int getOrderNum() {
+		return orderNum;
+	}
+
+	public void setOrderNum(int orderNum) {
+		this.orderNum = orderNum;
 	}
 
 	public String getFirstname() {

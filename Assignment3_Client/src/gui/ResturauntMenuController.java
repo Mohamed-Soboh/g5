@@ -41,35 +41,20 @@ public class ResturauntMenuController implements Initializable{
 	    private Button backToHomePagebtn;
 	    Button[] buttons;
 	    Button back;
-	    @FXML
-	    void BackToHomePageFromResMenu(ActionEvent event) throws IOException {
-	    	Stage stage= (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.close();
-			Parent root = FXMLLoader.load(getClass().getResource("/gui/NormalUserHomePage.fxml"));
-			Stage primaryStage = new Stage();
-			Scene scene = new Scene(root);
-			primaryStage.setTitle("Home Page");
-			primaryStage.setScene(scene);
-			primaryStage.show();
-	    }
-	    
-	    @FXML
-	    void restaurante(ActionEvent event) {
-	    	
-	    }
 
 		public void start(Stage primaryStage) throws IOException {
-			MessagesClass message=new MessagesClass(Messages.GetAllRestaurants,null);
+			MessagesClass message=new MessagesClass(Messages.GetAllRestaurants,null);//Get arraylist of all restaurants available
 			ClientUI.chat.accept(message);
-			buttons=new Button[ChatClient.restaurantList.size()];
-			System.out.println(ChatClient.restaurantList.toString());
+			buttons=new Button[ChatClient.restaurantList.size()];//create button array of all restaurants
 			BuildButtonsForRestaurants(ChatClient.restaurantList,primaryStage);
 		}
-
+		
+		//build gui according to restaurants number and set functionalities
 		private void BuildButtonsForRestaurants(ArrayList<Resturaunt> restaurantList,Stage primaryStage) {
 			AnchorPane pane1 = new AnchorPane();
 			pane1.setStyle("-fx-background-color: #555555;");
-			//VBox grid=new VBox();
+			
+			//set header and put BM image into title
 			VBox vbox=new VBox(10);
 			VBox head=new VBox(10);
 			head.setMaxSize(100, 600);
@@ -83,8 +68,6 @@ public class ResturauntMenuController implements Initializable{
 			Label label = new Label("Restaurants Menu");
 			label.setStyle("-fx-background-color: #444444;");
 			back=new Button();
-			//back.getClass().getResource("Button.css").toExternalForm();
-			//back.setStyle("-fx-background-color:#d39b4b; -fx-background-radius:30 30 30 30;");
 			
 			back.setText("Back");
 			back.setTranslateX(340);
@@ -98,8 +81,8 @@ public class ResturauntMenuController implements Initializable{
 			label.setTranslateY(-150);
 			head.getChildren().add(image);
 			head.getChildren().add(label);
-			//head.setStyle("-fx-background-color: #555555;");
 			
+			//create buttons and set ID's for all restaurants
 			for (int i = 0; i < restaurantList.size(); i++) {
 				Resturaunt r=(Resturaunt)restaurantList.get(i);
 				Button b=new Button();
@@ -116,6 +99,7 @@ public class ResturauntMenuController implements Initializable{
 			vbox.setPrefSize(200, 300);
 			vbox.setStyle("-fx-background-color: #555555;");
 
+			//add scroll pane to be able to scroll through restaurants
 			ScrollPane pane = new ScrollPane(vbox);
 			pane.setContent(vbox);
 			vbox.setStyle("-fx-background-color: #555555;");	
@@ -137,7 +121,8 @@ public class ResturauntMenuController implements Initializable{
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		}
-
+		
+		//if press button back then go back to home page
 		EventHandler<ActionEvent> backToUserHomePage = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e)
             {
@@ -146,7 +131,8 @@ public class ResturauntMenuController implements Initializable{
         		Stage primaryStage1 = new Stage();
 				NormalUserHomePageController NUHP = new NormalUserHomePageController();
 				try {
-					NUHP.start(primaryStage1);
+					//NUHP.start(primaryStage1);
+					NormalUserHomePageController.homePageStage.show();
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -154,7 +140,7 @@ public class ResturauntMenuController implements Initializable{
             }
         };
         
-        
+        //if chose restaurant go to restaurant menu
         EventHandler<ActionEvent> GoToRestaurant = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e)
             {
@@ -183,9 +169,6 @@ public class ResturauntMenuController implements Initializable{
         
 		@Override
 		public void initialize(URL arg0, ResourceBundle arg1) {
-			
-			
+				
 		}
-	    
-	    
 }

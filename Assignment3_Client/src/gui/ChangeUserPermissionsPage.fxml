@@ -12,29 +12,60 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="629.0" prefWidth="878.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ChangeUserPermissionsPage">
+<AnchorPane prefHeight="629.0" prefWidth="878.0"
+	xmlns="http://javafx.com/javafx/8.0.171"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="gui.ChangeUserPermissionsPage">
 	<children>
-		<AnchorPane prefHeight="752.0" prefWidth="1183.0" style="-fx-background-color: #555555;">
+		<AnchorPane prefHeight="752.0" prefWidth="1183.0"
+			style="-fx-background-color: #555555;">
 			<children>
-				<Button layoutX="31.0" layoutY="670.0" mnemonicParsing="false" onAction="#logOut" prefHeight="54.0" prefWidth="65.0" style="-fx-background-color: #555555;">
+				<Text fill="WHITE" layoutX="32.0" layoutY="51.0"
+					strokeType="OUTSIDE" strokeWidth="0.0" text="Maneger,">
+					<font>
+						<Font name="System Bold" size="25.0" />
+					</font>
+				</Text>
+				<Text fx:id="HRusername" fill="WHITE" layoutX="153.0"
+					layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0"
+					wrappingWidth="217.0">
+					<font>
+						<Font name="System Bold" size="25.0" />
+					</font>
+				</Text>
+				<Button layoutX="1089.0" layoutY="10.0"
+					mnemonicParsing="false" onAction="#logOut" prefHeight="54.0"
+					prefWidth="65.0" style="-fx-background-color: #555555;">
 					<graphic>
 						<ImageView fitHeight="54.0" fitWidth="65.0">
 							<image>
-								<Image url="icons/transparent-log-out-symbol-icon-arrows-icon-logout-icon-60748f03724088.284782351618251523468.png" />
+								<Image
+									url="icons/transparent-log-out-symbol-icon-arrows-icon-logout-icon-60748f03724088.284782351618251523468.png" />
 							</image>
 						</ImageView>
 					</graphic>
 				</Button>
-				<TableView fx:id="table" layoutX="175.0" layoutY="106.0" prefHeight="407.0" prefWidth="873.0">
+				<TableView fx:id="table" layoutX="175.0" layoutY="74.0"
+					prefHeight="407.0" prefWidth="873.0">
 					<columns>
 						<TableColumn fx:id="IDcl" prefWidth="202.0" text="ID" />
-						<TableColumn fx:id="firstnamecl" prefWidth="217.0" text="User Name" />
-						<TableColumn fx:id="lastnamecl" prefWidth="271.0" text="Password" />
-						<TableColumn fx:id="emailcl" prefWidth="182.0" text="Status" />
+						<TableColumn fx:id="firstnamecl" prefWidth="217.0"
+							text="User Name" />
+						<TableColumn fx:id="lastnamecl" prefWidth="271.0"
+							text="Password" />
+						<TableColumn fx:id="emailcl" prefWidth="182.0"
+							text="Status" />
 					</columns>
 				</TableView>
-				<TextField fx:id="getID" layoutX="510.0" layoutY="531.0" prefHeight="31.0" prefWidth="217.0" promptText="Enter ID" />
-				<Button layoutX="459.0" layoutY="638.0" mnemonicParsing="false" onAction="#changebt" prefHeight="39.0" prefWidth="334.0" style="-fx-background-color: #228B22;" text="change">
+				<Button layoutX="51.0" layoutY="105.0"
+					mnemonicParsing="false" onAction="#updateBt" prefHeight="46.0"
+					prefWidth="65.0" style="-fx-background-color: #555555;" />
+				<TextField fx:id="getID" layoutX="510.0" layoutY="503.0"
+					prefHeight="31.0" prefWidth="217.0" promptText="Enter ID" />
+				<Button layoutX="459.0" layoutY="638.0"
+					mnemonicParsing="false" onAction="#changebt" prefHeight="39.0"
+					prefWidth="334.0" style="-fx-background-color: #228B22;"
+					text="change">
 					<font>
 						<Font name="System Bold" size="18.0" />
 					</font>
@@ -42,22 +73,22 @@
 						<InnerShadow />
 					</effect>
 				</Button>
-				<Text fx:id="statustext" fill="#d39b4b" layoutX="266.0" layoutY="711.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="669.6708984375">
+				<Text fx:id="statustext" fill="#d39b4b" layoutX="510.0"
+					layoutY="723.0" strokeType="OUTSIDE" strokeWidth="0.0"
+					wrappingWidth="246.6708984375">
 					<font>
 						<Font name="System Bold" size="22.0" />
 					</font>
 				</Text>
-				<Text fill="WHITE" layoutX="454.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Change User Permissions">
+				<Text fill="WHITE" layoutX="454.0" layoutY="41.0"
+					strokeType="OUTSIDE" strokeWidth="0.0"
+					text="Change User Permissions">
 					<font>
 						<Font name="System Bold" size="25.0" />
 					</font>
 				</Text>
-				<ComboBox fx:id="statustype" layoutX="525.0" layoutY="575.0" prefHeight="31.0" prefWidth="187.0" />
-            <Text fx:id="pathtext" fill="WHITE" layoutX="14.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="421.0000024661422">
-               <font>
-                  <Font name="System Bold" size="17.0" />
-               </font>
-            </Text>
+				<ComboBox fx:id="statustype" layoutX="525.0"
+					layoutY="550.0" prefHeight="31.0" prefWidth="187.0" />
 			</children>
 		</AnchorPane>
 	</children>

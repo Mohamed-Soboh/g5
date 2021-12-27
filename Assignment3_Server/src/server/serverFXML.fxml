@@ -25,14 +25,9 @@
          <font>
             <Font name="Audiowide" size="16.0" />
          </font></Button>
-      <Button layoutX="45.0" layoutY="431.0" mnemonicParsing="false" onAction="#startServerBtn" prefHeight="39.0" prefWidth="162.0" style="-fx-background-color: #4754a2;" text="Start Server" textFill="WHITE">
+      <Button layoutX="50.0" layoutY="431.0" mnemonicParsing="false" onAction="#startServerBtn" prefHeight="39.0" prefWidth="162.0" style="-fx-background-color: #4754a2;" text="Start Server" textFill="WHITE">
          <font>
             <Font name="Audiowide" size="16.0" />
          </font></Button>
-      <Button layoutX="284.0" layoutY="431.0" mnemonicParsing="false" onAction="#importdata" prefHeight="39.0" prefWidth="162.0" style="-fx-background-color: green;" text="Import Data" textFill="WHITE">
-         <font>
-            <Font name="Audiowide" size="16.0" />
-         </font>
-      </Button>
    </children>
 </AnchorPane>

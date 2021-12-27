@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 public class WorkerUser implements Serializable{
 
- 
 	/**
 	 * 
 	 */
@@ -18,25 +17,7 @@ public class WorkerUser implements Serializable{
 	private String PhoneNumber;
 	private int IsLoogedIn;
 	private int IDRestaurant;
-	private String RestaurantName;
-	public WorkerUser(String userID, String firstName, String lastName, String userName, String password, String email,
-			String phoneNumber, int iDRestaurant) {
-		super();
-		UserID = userID;
-		FirstName = firstName;
-		LastName = lastName;
-		UserName = userName;
-		Password = password;
-		Email = email;
-		PhoneNumber = phoneNumber;
-		IDRestaurant = iDRestaurant;
-	}
-	public String getRestaurantName() {
-		return RestaurantName;
-	}
-	public void setRestaurantName(String restaurantName) {
-		RestaurantName = restaurantName;
-	}
+	
 	@Override
 	public String toString() {
 		return "WorkerUser [UserID=" + UserID + ", FirstName=" + FirstName + ", LastName=" + LastName + ", UserName="

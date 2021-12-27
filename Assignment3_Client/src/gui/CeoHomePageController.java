@@ -94,11 +94,6 @@ public class CeoHomePageController implements Initializable{
 
     @FXML
     private Button logout;
-    @FXML
-    private AnchorPane usersanchor;
-
-    @FXML
-    private AnchorPane manageranchor;
 
     @FXML
     void AcceptRestaurant(ActionEvent event) {
@@ -138,7 +133,6 @@ public class CeoHomePageController implements Initializable{
 			e.printStackTrace();
 		}
     }
-   
 
     @FXML
     void CreateReport(ActionEvent event) {
@@ -176,7 +170,7 @@ public class CeoHomePageController implements Initializable{
     }
 
     @FXML
-    void managerbt(ActionEvent event) {////////////////////////////////////////////////
+    void managerbt(ActionEvent event) {
 
     }
 
@@ -211,7 +205,7 @@ public class CeoHomePageController implements Initializable{
     }
 
     @FXML
-    void usersbt(ActionEvent event) {///////////////////////////////////////////////////
+    void usersbt(ActionEvent event) {
 
     }
 
@@ -232,7 +226,7 @@ public class CeoHomePageController implements Initializable{
     	
         
 		stage.close();	
-		ClientUI.chat.accept(new MessagesClass(Messages.updateStatus, ChatClient.userceo,0));
+		ClientUI.chat.accept(new MessagesClass(Messages.updateStatus, ChatClient.userceo));
 		LogInForm aFrame = new LogInForm(); // create StudentFrame
 		Stage primaryStage = new Stage();
 		try {

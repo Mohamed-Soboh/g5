@@ -21,6 +21,8 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import client.ChatClient;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +33,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -44,25 +48,45 @@ public class PaymentNormalUserController implements Initializable {
 
 	@FXML
 	private Text errtxt;
-
+	  @FXML
+	    private ImageView QRimage;
 	@FXML
+	//go back to pick up or delivery page depends on where did the user come from
 	void BackFunction(ActionEvent event) throws Exception {
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.close();
 		Stage primaryStage = new Stage();
-		PickUpFormController PUFC = new PickUpFormController();
-		PUFC.start(primaryStage);
+		if (PickUpFormController.Pickup == true) {
+			PickUpFormController PUFC = new PickUpFormController();
+			PUFC.start(primaryStage);
+		}
+		if (DeliveryInfoController.Delivery == true) {
+			DeliveryInfoController DIC = new DeliveryInfoController();
+			DIC.start(primaryStage);
+		}
 	}
 
 	@FXML
 	void SubmitFunction(ActionEvent event) throws Exception {
-		if (String.valueOf(w4cnumtxt.getText()).equals("")) 
-		{
+		//if w4c text field is empty
+		if (String.valueOf(w4cnumtxt.getText()).equals("")) {
 			errtxt.setText("Please enter code");
 			return;
 		}
+		//if given wrong w4c code
 		if (!Integer.valueOf(w4cnumtxt.getText()).equals(ChatClient.w4c.getCode())) {
 			errtxt.setText("Wrong W4C code");
+			return;
+		}
+		//if business user left employer text field empty
+		if (ChatClient.user.getUserType().equals("Bussiness") && String.valueOf(employertxt.getText()).equals("")) {
+			errtxt.setText("Please enter your employer");
+			return;
+		}
+		
+		//if business user entered wrong employer name
+		if (ChatClient.user.getUserType().equals("Bussiness") && !String.valueOf(employertxt.getText()).equals(ChatClient.Bussinessuser.getCompany())) {
+			errtxt.setText("Wrong employer");
 			return;
 		}
 		// need to check if employer exists
@@ -72,7 +96,8 @@ public class PaymentNormalUserController implements Initializable {
 		ShowInfoOfOrderController SIOO = new ShowInfoOfOrderController();
 		SIOO.start(primaryStage);
 	}
-
+	
+	//read image of QR code
 	public static String readQRCode(String filePath, String charset, Map hintMap)
 			throws FileNotFoundException, IOException, NotFoundException {
 		BinaryBitmap binaryBitmap = new BinaryBitmap(
@@ -81,6 +106,7 @@ public class PaymentNormalUserController implements Initializable {
 		return qrCodeResult.getText();
 	}
 
+	//get path of file example -> "C:\Program Files\..."
 	private String getFilePath() {
 		String path = "";
 		JFileChooser j = new JFileChooser();
@@ -94,6 +120,7 @@ public class PaymentNormalUserController implements Initializable {
 	}
 
 	@FXML
+	//Import QR image from users Computer
 	void QR_Import(ActionEvent event) {
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.hide();
@@ -107,6 +134,9 @@ public class PaymentNormalUserController implements Initializable {
 			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 			try {
 				String code = readQRCode(filePath, charset, hintMap);
+				FileInputStream input = new FileInputStream(filePath);
+				Image image = new Image(input);
+				 QRimage.setImage(image); 
 				w4cnumtxt.setText(code);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -121,18 +151,28 @@ public class PaymentNormalUserController implements Initializable {
 		}
 
 	}
-	
+
 	public void start(Stage primaryStage) throws Exception {
 		Parent root = FXMLLoader.load(getClass().getResource("/gui/PaymentNormalUserFXML.fxml"));
 		Scene scene = new Scene(root);
-		primaryStage.setTitle("Pick up info page");
+		primaryStage.setTitle("QR payment");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		//if user is not business they hide employer text field
 		if (!ChatClient.user.getUserType().equals("Bussiness"))
 			employertxt.setVisible(false);
+		w4cnumtxt.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (!newValue.matches("\\d{0,3}?")) {
+					w4cnumtxt.setText(oldValue);
+				}
+			}
+		});
 	}
+
 }

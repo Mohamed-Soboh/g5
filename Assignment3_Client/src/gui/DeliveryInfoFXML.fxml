@@ -4,6 +4,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -29,7 +30,7 @@
             <Font size="21.0" />
          </font>
       </Button>
-      <Button layoutX="545.0" layoutY="560.0" mnemonicParsing="false" onAction="#goToPayment" prefHeight="52.0" prefWidth="188.0" stylesheets="@../../../../../OneDrive/שולחן%20העבודה/gui/Button.css" text="Go to payment" textFill="WHITE">
+      <Button layoutX="588.0" layoutY="560.0" mnemonicParsing="false" onAction="#goToPayment" prefHeight="52.0" prefWidth="188.0" stylesheets="@../../../../../OneDrive/שולחן%20העבודה/gui/Button.css" text="Go to payment" textFill="WHITE">
          <font>
             <Font size="21.0" />
          </font>
@@ -41,5 +42,17 @@
             <Font size="18.0" />
          </font>
       </Label>
+      <Text fx:id="errtxt" fill="RED" layoutX="277.0" layoutY="598.0" strokeType="OUTSIDE" strokeWidth="0.0">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Text>
+      <Spinner fx:id="partnersSpinner" layoutX="565.0" layoutY="294.0" prefHeight="31.0" prefWidth="106.0" />
+      <Text fx:id="partnerstxt" fill="RED" layoutX="528.0" layoutY="283.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose number of partners" />
+      <Text fx:id="sharedtxt" fill="RED" layoutX="687.0" layoutY="319.0" strokeType="OUTSIDE" strokeWidth="0.0">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

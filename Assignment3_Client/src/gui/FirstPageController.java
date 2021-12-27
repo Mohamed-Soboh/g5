@@ -30,6 +30,8 @@ public class FirstPageController implements Initializable{
 	void viewOrders(ActionEvent event) throws Exception {
 		ip = (String) IPAddress.getText();
 		ClientUI.chat = new ClientController(FirstPageController.ip, 5555);
+		MessagesClass msg = new MessagesClass(Messages.insidealldatafromBiteMeDB, null);
+		ClientUI.chat.accept(msg);
 		Stage stage= (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.close();
 		LogInForm LIF=new LogInForm();

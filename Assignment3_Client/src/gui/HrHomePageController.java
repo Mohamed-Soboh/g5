@@ -134,6 +134,7 @@ public class HrHomePageController implements Initializable {
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		System.out.println(firstHRpage.HRManager.getCompnay()+"jdtfdcvassanisbubas");
 
 		MessagesClass msg1 = new MessagesClass(Messages.GettempData, firstHRpage.HRManager.getCompnay());
 		ClientUI.chat.accept(msg1);
@@ -148,13 +149,13 @@ public class HrHomePageController implements Initializable {
 		settext();
 	}
 
-	public void Updatetable(String iD, String firstName, String lastName, String phoneNumber, String email, 
+	public void Updatetable(String iD, String firstName, String lastName, String phoneNumber, String email, float w4c,
 			String company) {
 
 		javafx.application.Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				BussinessUser temp = new BussinessUser(iD, firstName, lastName, phoneNumber, email, 0,company, 0);
+				BussinessUser temp = new BussinessUser(iD, firstName, lastName, phoneNumber, email, w4c, company, 0);
 				System.out.println("updated: " + temp);
 
 			}
