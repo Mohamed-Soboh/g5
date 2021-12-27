@@ -11,18 +11,23 @@ import java.util.ArrayList;
 
 import client.ChatClient;
 import client.ClientController;
-import common.Addition;
 import common.BussinessUser;
-import common.Item;
+import common.Delivery;
+import common.GroupDelivery;
 import common.Messages;
 import common.MessagesClass;
 import common.Normal;
+import common.Order;
 import common.RestaurantManager;
 import common.Resturaunt;
 import common.User;
 import common.Visa;
 import common.W4CNormal;
-import common.WorkerUser;
+import common.clientDetails;
+import common.clientsInfo;
+import gui.SharedDeliveryController;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import ocsf.server.*;
 
 /**
@@ -37,6 +42,7 @@ import ocsf.server.*;
  */
 public class EchoServer extends AbstractServer {
 	static W4CNormal w4c = null;
+	static ArrayList<clientsInfo> clientsGroup = new ArrayList<>();
 	// Class variables *************************************************
 
 	/**
@@ -78,6 +84,7 @@ public class EchoServer extends AbstractServer {
 	private void UpdateClient(InetAddress HostName, String IP, String Status) {
 		ServerUI.aFrame.UpdateClient(HostName, IP, Status);
 	}
+
 	// Instance methods ************************************************
 
 	/**
@@ -89,7 +96,8 @@ public class EchoServer extends AbstractServer {
 
 	public void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
-		System.out.println("Message received: " + ((MessagesClass) msg).getMsgType() + " from " + client);
+		// System.out.println("Message received: " + ((MessagesClass) msg).getMsgType()
+		// + " from " + client);
 		MessagesClass message = (MessagesClass) msg;
 		User user = null;
 		User user1 = null;
@@ -106,7 +114,7 @@ public class EchoServer extends AbstractServer {
 			try {
 				if (mysqlConnection.LogInChecker(user) != null) {
 					message = new MessagesClass(Messages.loginSucceeded, mysqlConnection.LogInChecker(user));
-					if (!mysqlConnection.LogInChecker(user).getStatus().equals("Locked")){
+					if (!mysqlConnection.LogInChecker(user).getStatus().equals("Locked")) {
 						mysqlConnection.updateClientStatus(user, 1);
 					}
 
@@ -130,146 +138,27 @@ public class EchoServer extends AbstractServer {
 				e10.printStackTrace();
 			}
 			break;
-		case GetallAvailableCompany:
-
+		case GetNormalUser:
+			Normal nuser = null;
 			try {
-				message = new MessagesClass(Messages.GetallAvailableCompany, mysqlConnection.GetallAvailableCompany());
-			} catch (SQLException e11) {
+				nuser = mysqlConnection.getNormalUser((User) message.getMsgData());
+			} catch (SQLException e2) {
 				// TODO Auto-generated catch block
-				e11.printStackTrace();
+				e2.printStackTrace();
 			}
+			message = new MessagesClass(Messages.GetNormalUser, nuser);
 			try {
 				client.sendToClient(message);
-			} catch (IOException e11) {
+			} catch (IOException e2) {
 				// TODO Auto-generated catch block
-				e11.printStackTrace();
-			}
-			break;
-		case GetAllOreders:
-			try {
-				message = new MessagesClass(Messages.GetAllOreders, mysqlConnection.GetAllOrder((int) message.getMsgData()));
-			} catch (NumberFormatException e13) {
-				// TODO Auto-generated catch block
-				e13.printStackTrace();
-			} catch (SQLException e13) {
-				// TODO Auto-generated catch block
-				e13.printStackTrace();
-			}
-			try {
-				client.sendToClient(message);
-			} catch (IOException e13) {
-				// TODO Auto-generated catch block
-				e13.printStackTrace();
-			}
-
-			break;
-		case AddNewUser:// add new user
-		
-			try {
-				message = new MessagesClass(Messages.AddNewUser, mysqlConnection.AddNewUser((User) message.getMsgData(), message.getMsgData1(),
-						(String) message.getW4c()));
-			} catch (SQLException e12) {
-				// TODO Auto-generated catch block
-				e12.printStackTrace();
-			}
-			try {
-				client.sendToClient(message);
-			} catch (IOException e11) {
-				// TODO Auto-generated catch block
-				e11.printStackTrace();
-			}
-			break;
-		case AddNewUserwithvisa:
-			try {
-				message = new MessagesClass(Messages.AddNewUserwithvisa,mysqlConnection.AddNewUserwithvisa((User) message.getMsgData(),
-						message.getMsgData1(),(Visa)message.getMsgData3(),(String) message.getW4c()));
-			} catch (SQLException e11) {
-				// TODO Auto-generated catch block
-				e11.printStackTrace();
-			}
-			try {
-				client.sendToClient(message);
-			} catch (IOException e11) {
-				// TODO Auto-generated catch block
-				e11.printStackTrace();
-			}
-
-			break;
-		case getCompanyList:/// take company list from musql
-			try {
-				message = new MessagesClass(Messages.getCompanyList, mysqlConnection.getCompanyList());
-				client.sendToClient(message);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			break;
-		case CompanyConfirmed:
-			String Cname1 = (String) message.getMsgData();
-			try {
-				mysqlConnection.companyConfirm(Cname1);
-				try {
-					client.sendToClient(message);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e2.printStackTrace();
 			}
 			break;
 
-		case CompanyRequest:
-			String Cname = (String) message.getMsgData();
-			try {
-				mysqlConnection.confirmCompane(Cname);
-				try {
-					client.sendToClient(message);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			break;
-
-		case CheckCompany:
-			String Cname11 = (String) message.getMsgData();
-			try {
-				message = new MessagesClass(Messages.CheckCompany, mysqlConnection.companyChecker(Cname11));
-				client.sendToClient(message);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			break;
-
-		case GetAllUsersFromUsersTable://///// take all users
-
-			try {
-				message = new MessagesClass(Messages.GetAllUsersFromUsersTable,
-						mysqlConnection.TakeAllUserThatNotConfiredyet());
-			} catch (SQLException e10) {
-				// TODO Auto-generated catch block
-				e10.printStackTrace();
-			}
-			try {
-				client.sendToClient(message);
-			} catch (IOException e10) {
-				// TODO Auto-generated catch block
-				e10.printStackTrace();
-			}
-			break;
 		case insidealldatafromBiteMeDB:
 			ArrayList<User> userfromBM;
-			try {
-				mysqlConnection.insidealldatafromBiteMeDB();
-			} catch (SQLException e9) {
-				// TODO Auto-generated catch block
-				e9.printStackTrace();
-			}
-			message = new MessagesClass(Messages.insidealldatafromBiteMeDB, null);
 
+			message = new MessagesClass(Messages.GotBranchManager, null);
 			try {
 				client.sendToClient(message);
 			} catch (IOException e) {
@@ -307,22 +196,12 @@ public class EchoServer extends AbstractServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			break;
-		case getnormaluser:
-
-			message = new MessagesClass(Messages.getnormaluser,
-					mysqlConnection.Getnormaluser((User) message.getMsgData()));
-			try {
-				client.sendToClient(message);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 
 			break;
 		case updateStatus:
-			// update the clieLoginnt status to 0 -> that mean he log out
+			// update the client status to 0 -> that mean he log out
 			if ((User) message.getMsgData() != null)
-				mysqlConnection.updateClientStatus((User) message.getMsgData(), (int) message.getMsgData1());
+				mysqlConnection.updateClientStatus((User) message.getMsgData(), 0);
 			try {
 				client.sendToClient(new MessagesClass(Messages.LogedOut, null));
 			} catch (IOException e) {
@@ -339,10 +218,10 @@ public class EchoServer extends AbstractServer {
 				e1.printStackTrace();
 			}
 			break;
+
 		case getallrestaurant:
 			// update the client status to 0 -> that mean he log out
-			String location = (String) message.getMsgData();
-			mysqlConnection.getAllResturaunt(location);
+			mysqlConnection.getAllResturaunt();
 			try {
 				client.sendToClient(new MessagesClass(Messages.getallrestaurant, mysqlConnection.getAllresturaunt));
 			} catch (IOException e) {
@@ -368,36 +247,7 @@ public class EchoServer extends AbstractServer {
 			}
 
 			break;
-		case GetAllitems:
-			int resid1 = (int) message.getMsgData();
-			try {
-				client.sendToClient(new MessagesClass(Messages.GetAllitems, mysqlConnection.getallitems(resid1)));
-			} catch (IOException e8) {
-				// TODO Auto-generated catch block
-				e8.printStackTrace();
-			} catch (SQLException e8) {
-				// TODO Auto-generated catch block
-				e8.printStackTrace();
-			}
 
-			break;
-		case GetAllitemsfromitem:/// get main dish
-			int resid = (int) message.getMsgData();
-			String type = (String) message.getMsgData1();
-			try {
-				try {
-					client.sendToClient(new MessagesClass(Messages.GetAllitemsfromitem,
-							mysqlConnection.getallmaindish(resid, type)));
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (IOException e7) {
-				// TODO Auto-generated catch block
-				e7.printStackTrace();
-			}
-
-			break;
 		case GotW4C:
 			int num = mysqlConnection.IDForW4C();
 			message = new MessagesClass(Messages.GotW4C, num);
@@ -459,45 +309,7 @@ public class EchoServer extends AbstractServer {
 			// clientDisconnected(client);
 
 			break;
-		case CreateNewBussinessAccont:
-			BussinessUser Account = (BussinessUser) message.getMsgData1();
-			String str = (String) message.getW4c();
-			user = (User) message.getMsgData();
-			try {
-				String s2 = mysqlConnection.InsertNewBussinessAccount(user, Account, str);
-				message = new MessagesClass(Messages.loginerror, s2);
-			} catch (SQLException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			try {
-				client.sendToClient(message);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			break;
-		case CreateNewBussinessAccontWithVisa:
-			BussinessUser Account1 = (BussinessUser) message.getMsgData3();
-			String str1 = (String) message.getW4c();
-			user = (User) message.getMsgData1();
-			visa = (Visa) message.getMsgData();
-			try {
-				String s2 = mysqlConnection.InsertNewBussinessAccountWithVisa(visa, user, Account1, str1);
-				message = new MessagesClass(Messages.loginerror, s2);
 
-			} catch (SQLException e6) {
-				// TODO Auto-generated catch block
-				e6.printStackTrace();
-			}
-			try {
-				client.sendToClient(message);
-			} catch (IOException e6) {
-				// TODO Auto-generated catch block
-				e6.printStackTrace();
-			}
-
-			break;
 		case deleteid:
 			try {
 				mysqlConnection.deleteId((String) message.getMsgData(), (String) message.getMsgData1());
@@ -561,85 +373,16 @@ public class EchoServer extends AbstractServer {
 
 			break;
 		case Createaccepttresturaunt:
-			Resturaunt res = (Resturaunt) message.getMsgData();		
-				
-			try {
-				client.sendToClient(new MessagesClass(Messages.Createaccepttresturaunt,
-						mysqlConnection.Create_acceptRestaurant(res)));
-			} catch (IOException e5) {
-				// TODO Auto-generated catch block
-				e5.printStackTrace();
-			} catch (SQLException e5) {
-				// TODO Auto-generated catch block
-				e5.printStackTrace();
-			}
-					
-			break;
-		case GetAllWorker:
-			int RestaurantId = (int) message.getMsgData();
+			Resturaunt res = (Resturaunt) message.getMsgData();
+			mysqlConnection.Create_acceptRestaurant(res);
 
 			try {
-				client.sendToClient(
-						new MessagesClass(Messages.GetAllWorker, mysqlConnection.GetAllWorkers(RestaurantId)));
-			} catch (IOException e2) {
+				client.sendToClient(new MessagesClass(Messages.Createaccepttresturaunt, null));
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			} catch (Exception e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-
-			break;
-		case AddNewWorker://///// add new worker in worker table and user
-			WorkerUser WorkerUser = (WorkerUser) message.getMsgData();
-			try {
-				try {
-					client.sendToClient(
-							new MessagesClass(Messages.AddNewWorker, mysqlConnection.AddNewWorker(WorkerUser)));
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
+				e.printStackTrace();
 			}
 			break;
-
-		case deleteworker://// removed worker from user and workerstable
-			WorkerUser WorkerUser1 = (WorkerUser) message.getMsgData();
-			try {
-				try {
-					mysqlConnection.RemoveWorker(WorkerUser1);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				client.sendToClient(new MessagesClass(Messages.AddNewWorker, null));
-			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-
-			break;
-		case editworkers:///// edit worker
-
-			WorkerUser WorkerUser2 = (WorkerUser) message.getMsgData();
-			try {
-				mysqlConnection.EditWorker(WorkerUser2);
-			} catch (SQLException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			try {
-				client.sendToClient(new MessagesClass(Messages.editworkers, null));
-			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-
-			break;
-
 		case acceptnewnormaluser:
 			user = (User) message.getMsgData();
 			try {
@@ -654,13 +397,11 @@ public class EchoServer extends AbstractServer {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 			break;
 
 		case getallusers:
 			try {
 				mysqlConnection.getAllUsers();
-
 				client.sendToClient(new MessagesClass(Messages.getallusers, mysqlConnection.getlistofnormalaccount));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -775,61 +516,6 @@ public class EchoServer extends AbstractServer {
 				}
 			}
 			break;
-		case GetOrderItems:
-			try {
-				message = new MessagesClass(Messages.GetOrderItems,mysqlConnection.GetallOrederItems((int)message.getMsgData()));
-				try {
-					client.sendToClient(message);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			} catch (SQLException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			
-			
-			break;
-			
-		case DeleteOrder:
-			mysqlConnection.deleteOrder((int)message.getMsgData());
-			
-				message = new MessagesClass(Messages.DeleteOrder,null);
-				try {
-					client.sendToClient(message);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			break;
-			
-		case CheckDelivery:
-			message = new MessagesClass(Messages.CheckDelivery,mysqlConnection.CheckDelivery((int)message.getMsgData()));
-			try {
-				client.sendToClient(message);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			break;
-
-		case getuser:
-			try {
-				message = new MessagesClass(Messages.getuser,mysqlConnection.getuser((String)message.getMsgData()));
-			} catch (SQLException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			try {
-				client.sendToClient(message);
-			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-
-			break;
 		case getrestaurantname:
 			int idrestaurant = (int) message.getMsgData();
 			try {
@@ -871,30 +557,126 @@ public class EchoServer extends AbstractServer {
 				e.printStackTrace();
 			}
 			break;
-		case UpdateItem:
-			try {
-				mysqlConnection.UpdateItem((Item) message.getMsgData(), (String) message.getMsgData1());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			message = new MessagesClass(Messages.UpdateItem, null);
+
+		case getOrderID:
+			int orderNum = mysqlConnection.getOrderID();
+			message = new MessagesClass(Messages.getOrderID, orderNum);
 			try {
 				client.sendToClient(message);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			break;
+
+		case getIND:
+			int ind = mysqlConnection.getIND();
+			message = new MessagesClass(Messages.getIND, ind);
+			try {
+				client.sendToClient(message);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+
+		case newOrder:
+			mysqlConnection.newOrder((Order) message.getMsgData());
+			message = new MessagesClass(Messages.newOrder, null);
+			try {
+				client.sendToClient(message);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+
+		case newDelivery:
+			mysqlConnection.newDelivery((Delivery) message.getMsgData());
+			message = new MessagesClass(Messages.newDelivery, null);
+			try {
+				client.sendToClient(message);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+
+		case soldItems:
+			mysqlConnection.soldItems((Order) message.getMsgData());
+			message = new MessagesClass(Messages.soldItems, null);
+			try {
+				client.sendToClient(message);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+
+		case updateW4CforBussiness:
+			mysqlConnection.updateW4CforBussiness((BussinessUser) message.getMsgData());
+			message = new MessagesClass(Messages.updateW4CforBussiness, null);
+			try {
+				client.sendToClient(message);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+
+		case partnersGroupNumber:
+
+			mysqlConnection.InsertGroup((GroupDelivery) message.getMsgData());
+
+			clientsGroup.add(new clientsInfo(client, ((GroupDelivery) message.getMsgData()).getGroupNum()));
+			message = new MessagesClass(Messages.partnersGroupNumber, null);
+
+			try {
+				client.sendToClient(message);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+
+		case sharedGroup:
+			try {
+				client.sendToClient(new MessagesClass(Messages.error, null));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+
+		case getGroupNumber:
+			boolean exists = false;
+			try {
+				exists = mysqlConnection.GetGroupNumber((int) message.getMsgData());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			message = new MessagesClass(Messages.getGroupNumber, exists);
+			try {
+				client.sendToClient(message);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+		case updateTable:
+			sendToAllClients(new MessagesClass(Messages.joinGroup, (clientDetails) message.getMsgData()));
+			// sendToAllClients(new MessagesClass(Messages.joinGroup, null));
 
 			break;
-		case RemoveItem:
-			try {
-				mysqlConnection.RemoveItem((Item) message.getMsgData());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			message = new MessagesClass(Messages.RemoveItem, null);
+
+		case closeGroupDelivery:
+			sendToAllClients(new MessagesClass(Messages.closeGroupDelivery, (int) message.getMsgData()));
+			break;
+
+		case order_items_additions:
+			mysqlConnection.order_items_additions(message.getMsgData());
+			message = new MessagesClass(Messages.order_items_additions, null);
 			try {
 				client.sendToClient(message);
 			} catch (IOException e) {
@@ -902,42 +684,10 @@ public class EchoServer extends AbstractServer {
 				e.printStackTrace();
 			}
 			break;
-		case RemoveItemAddition:
-			try {
-				mysqlConnection.RemoveItemAddition((Item) message.getMsgData(), (String) message.getMsgData1());
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} // remove addition ftom item_addition and addition
-			message = new MessagesClass(Messages.RemoveItemAddition, null);
-			try {
-				client.sendToClient(message);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			break;
-		case AddItems:
-			try {
-				System.out.println((String) message.getW4c() + "im heree in additems");
-				mysqlConnection.AddItems((Item) message.getMsgData(), (Addition) message.getMsgData1(),
-						(int) message.getMsgData3(), (String) message.getW4c());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			message = new MessagesClass(Messages.AddItems, null);
-			try {
-				client.sendToClient(message);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		default:
 			break;
 
 		}
-
 	}
 
 	/**
@@ -947,17 +697,8 @@ public class EchoServer extends AbstractServer {
 	protected void serverStarted() {
 		mysqlConnection.connectToDB();
 		mysqlConnection.connectToBiteMeDB();
-
+		mysqlConnection.putdatafrombitemeDB();
 		System.out.println("Server listening for connections on port " + getPort());
-	}
-
-	public static void importdata() {
-		try {
-			mysqlConnection.insidealldatafromBiteMeDB();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**

@@ -17,7 +17,7 @@ public class RestaurantManager implements Serializable {
 	private int IsLoogedIn;
 	private int IDRestaurant;
 	
-
+	
 	public RestaurantManager(String userID, String firstName, String lastName, String userName, String password,
 			String email, String phoneNumber, int isLoogedIn, int iDRestaurant) {
 		super();

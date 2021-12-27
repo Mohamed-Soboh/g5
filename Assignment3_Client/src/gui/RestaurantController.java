@@ -35,6 +35,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -47,13 +48,17 @@ public class RestaurantController implements Initializable {
 	public static HashMap<Item,Object> spinners;
 	ArrayList<Item> item;
 	HashMap<Item,Integer> menu;
+	
 	public static Stage stageRestaurant;
+	
+	//constructor for creating menu of restaurant
 	public RestaurantController(Resturaunt r)
 	{
 		restaurant=r;
 		menu=restaurant.getMenu().getMenu();
 	}
 
+	//set menu to categories (Salad,MainDish,Desser,Drink)
 	public void start(Stage primaryStage) throws IOException {
 		
 		Font font=Font.font("Arial", FontWeight.BOLD, 15);
@@ -79,7 +84,8 @@ public class RestaurantController implements Initializable {
 		hbox.setTranslateX(10);
 		hbox.setTranslateY(140);
 	
-		
+	
+		//create salad menu
 		VBox saladBox=new VBox(5);
 		saladBox.setStyle("-fx-background-color: #707070");
 		saladBox.setPrefSize(200, 360);
@@ -97,7 +103,7 @@ public class RestaurantController implements Initializable {
 		saladPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		saladPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
 		
-		
+		//create mainDish menu
 		VBox mainDishBox=new VBox(5);
 		Label mainDishlbl=new Label("MainDish");
 		mainDishBox.setPrefSize(200, 360);
@@ -116,6 +122,7 @@ public class RestaurantController implements Initializable {
 		mainDishPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		mainDishPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
 
+		//create dessert menu
 		VBox dessertBox=new VBox(5);
 		Label dessertlbl=new Label("Dessert");
 		dessertBox.setStyle("-fx-background-color: #707070");
@@ -134,9 +141,9 @@ public class RestaurantController implements Initializable {
 		dessertPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
 		
 
+		//create drinks menu
 		VBox drinkBox=new VBox(5);
 		Label drinklbl=new Label("Drink");
-		
 		drinkBox.setStyle("-fx-background-color: #707070");
 		drinkBox.setPrefSize(200, 360);
 		drinklbl.setFont(font1);
@@ -151,10 +158,19 @@ public class RestaurantController implements Initializable {
 		drinkPane.setPannable(true); // allow scrolling via mouse dragging
 		drinkPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		drinkPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-
+		Line line = new Line();
+		line.setStartX(0); 
+		line.setEndX(230.0); 
+		line.setStartY(10);
+		line.setEndY(10);
+		
+		pane.getChildren().add(line);
+		
+		//drinkBox.getChildren().add(line);
 		spinners=new HashMap<Item,Object>();
 		item=restaurant.getMenu().getItems();
 		
+		//Initialize each item quantity according to database
 		for (int i = 0; i < item.size(); i++)
 		{
 			HBox tmp=new HBox(10);
@@ -175,21 +191,27 @@ public class RestaurantController implements Initializable {
 			tmp.getChildren().addAll(spinner,lbl);
 			
 			switch(c) {
+			//add each item to VBox according to its category
 			case Drink:
 				drinkBox.getChildren().add(tmp);
+				
 				break;
 			case Dessert:
 				dessertBox.getChildren().add(tmp);
+				
 				break;
 			case Salad:
 				saladBox.getChildren().add(tmp);
+				
 				break;
 			case MainDish:
 				mainDishBox.getChildren().add(tmp);
+				
 				break;
 			}
 		}
 		
+		//add all label to gui
 		hbox.getChildren().addAll(saladPane,mainDishPane,dessertPane,drinkPane);
 		pane.getChildren().addAll(saladlbl,mainDishlbl,dessertlbl,drinklbl);
 		pane.getChildren().add(hbox);
@@ -212,17 +234,21 @@ public class RestaurantController implements Initializable {
 		primaryStage.show();
 	}
 	   
+	//go to additions page
     EventHandler<ActionEvent> Additions = new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e)
         {
         	
         	int countItemQuantity=0;
+        	//count selected items quantity by user
         	for(Item it: spinners.keySet())
         	{
         		System.out.println(it.toString());
         		Spinner<Integer> spin=(Spinner<Integer>) spinners.get(it);
         		countItemQuantity+=spin.getValue().intValue();
         	}
+        	//check if user didn't pick any item
+        	//if user didn't pick any items pops alert
         	if(countItemQuantity==0)
         	{
         		Alert alert = new Alert(AlertType.NONE, "", ButtonType.CLOSE);
@@ -237,7 +263,6 @@ public class RestaurantController implements Initializable {
         	}
         	
         	 stageRestaurant= (Stage) ((Node) e.getSource()).getScene().getWindow();
-    		//stage.close();
         	 stageRestaurant.hide();
     		Stage primaryStage1 = new Stage();
     		AdditionsController AC=new AdditionsController();
@@ -250,6 +275,7 @@ public class RestaurantController implements Initializable {
         }
     };
     
+    //go back to restaurants list
 	EventHandler<ActionEvent> backToUserHomePage = new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e)
         {

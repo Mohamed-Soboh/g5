@@ -25,9 +25,9 @@ public class Resturaunt implements Serializable{
 	public Resturaunt(int ResId,String restaurant_Name,String location,Menu menu)
 	{
 		this.resturauntID = ResId;
-	      this.resturaunt_Name = resturaunt_Name;
-		this.location=location;
+		this.resturaunt_Name = resturaunt_Name;
 		this.menu = menu;
+		this.location=location;
 	}
 	public void setStatus(int status) {
 		this.status = status;

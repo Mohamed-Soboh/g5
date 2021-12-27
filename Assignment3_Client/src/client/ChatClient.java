@@ -6,12 +6,25 @@ package client;
 
 import ocsf.client.*;
 import common.*;
+import gui.AdditionsController;
+import gui.DeliveryInfoController;
+import gui.RestaurantController;
+import gui.SharedDeliveryController;
+import gui.ShowInfoOfOrderController;
+import gui.TypeOfOrderController;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.Alert.AlertType;
 
 import java.io.*;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 /**
  * This class overrides some of the methods defined in the abstract superclass
@@ -41,22 +54,22 @@ public class ChatClient extends AbstractClient {
 	public static Resturaunt Resturaunt;
 	public static ArrayList<Resturaunt> getallresturant;
 	public static User userceo;
-	public static ArrayList<WorkerUser> allworker;
-	public static ArrayList<Item> Items;
-	public static ArrayList<Item> allItems;
-    public static ArrayList<User> GetAllUsersFromUsersTable;
-    public static ArrayList<Company> AllCompany;
-    public static ArrayList<Company> CompanyList;
+
 	public static HRUser HRmanager1;
 	public static ArrayList<BussinessUser> bussinessUser;
 	public static WorkerUser WorkerUser;
 	public static String ErrorMessage;
 	public static CEOuser GetCEO;
-    public static boolean available;
-	public static ArrayList<Order> AllOrder;
-	public static ArrayList<ItemAddition> AllOrderItem;
-	public static String str;
-	public static boolean deliveryExists;
+	public static int orderNum;
+	public static int ind;
+	public static boolean group_exist;
+	public static ArrayList<String> clients;
+	public static int numCode;
+	private static URL location;
+	private static ResourceBundle resources;
+	public static ArrayList<clientDetails> listClients;
+	public static int group_code;
+	public static ArrayList<Order> groupOrder;
 	/*
 	 * The interface type variable. It allows the implementation of the display
 	 * method in the client.
@@ -87,18 +100,53 @@ public class ChatClient extends AbstractClient {
 	 * @param msg The message from the server.
 	 */
 
-	@SuppressWarnings("unchecked")
 	public void handleMessageFromServer(Object msg) {
 		awaitResponse = false;
 
-		System.out.println("--> handleMessageFromServer");
+		// System.out.println("--> handleMessageFromServer");
 
 		MessagesClass message = (MessagesClass) msg;
-		System.out.println(message.toString());
+
 		switch (message.getMsgType()) {
 
+		case order_items_additions:
+			break;
+
+		case closeGroupDelivery:
+			group_code = (int) message.getMsgData();
+			System.out.println(group_code);
+			if (user.getUserType().equals("Bussiness")) {
+				System.out.println("i'm bussiness");
+				if (Bussinessuser.getGroup_code() == group_code) {
+					Bussinessuser.setLock(0);
+					TypeOfOrderController.currentThread().notifyAll();
+				}
+			}
+			break;
+		case joinGroup:
+			/*
+			boolean exist=false;
+			if (user.getUserType().equals("Bussiness")
+					&& DeliveryInfoController.randGroup == ((clientDetails) message.getMsgData()).getCode()) {
+				for (int i = 0; i < SharedDeliveryController.clients.size(); i++) {
+					if (((clientDetails) message.getMsgData()).getUser().equals(SharedDeliveryController.clients.get(i).getUser()))
+					{
+						exist=true;
+						break;
+					}
+				}
+			}
+			if(exist==false)
+				SharedDeliveryController.clients.add((clientDetails) message.getMsgData());
+			*/
+			if (user.getUserType().equals("Bussiness")
+					&& DeliveryInfoController.randGroup == ((clientDetails) message.getMsgData()).getCode()) {
+				SharedDeliveryController.clients.add((clientDetails) message.getMsgData());
+			}
+			 
+			break;
 		case loginSucceeded:
-			User ifCEOuser = (User) message.getMsgData();	
+			User ifCEOuser = (User) message.getMsgData();
 			if (!ifCEOuser.getUserType().equals("CEO")) {
 				user = (User) message.getMsgData();
 			} else {
@@ -106,24 +154,17 @@ public class ChatClient extends AbstractClient {
 				userceo = (User) message.getMsgData();
 			}
 			break;
-		case getuser:
-			str=(String) message.getMsgData();
+
+		case GetNormalUser:
+			normaluser = (Normal) message.getMsgData();
 			break;
-		case insidealldatafromBiteMeDB:
-			break;
-	
+
 		case getRestaurantWorker:
 			WorkerUser = (WorkerUser) message.getMsgData();
 			break;
-		case getnormaluser:
-			normaluser =(Normal) message.getMsgData();
-
-			break;
-		case GetAllUsersFromUsersTable:
-			GetAllUsersFromUsersTable=(ArrayList<User>) message.getMsgData();
-			break;
 		case GetbissnessUser:
 			Bussinessuser = (BussinessUser) message.getMsgData();
+			System.out.println(Bussinessuser);
 			break;
 		case loginerror:
 			ErrorMessage = (String) message.getMsgData();
@@ -131,25 +172,14 @@ public class ChatClient extends AbstractClient {
 		case GetCEO:
 			GetCEO = (CEOuser) message.getMsgData();
 			break;
-		case UpdateItem:///update item
-			break;
-		case RemoveItem:///remove item 
-			break;
-		case AddItems:
-			break;
 		case getRestaurantManager:
+
 			restaurantManager = (RestaurantManager) message.getMsgData();
-			break;
-		case CheckCompany:///////new
-			ErrorMessage = (String) message.getMsgData();
-			System.out.println(ErrorMessage+" the massege error is ");
 			break;
 		case getrestaurantname:
 			Resturaunt = (Resturaunt) message.getMsgData();
 			break;
-		case GetallAvailableCompany:
-			AllCompany=(ArrayList<Company>) message.getMsgData();
-			break;
+
 		case GotBranchManager:
 			branchManager = (BranchManager) message.getMsgData();
 			break;
@@ -159,41 +189,20 @@ public class ChatClient extends AbstractClient {
 			break;
 		case ResturauntRequestSent:
 			break;
-		case AddNewUser:
-			ErrorMessage = (String) message.getMsgData();
-			break;
-		case AddNewUserwithvisa:
-			ErrorMessage = (String) message.getMsgData();
-			break;
 		case GettempData:
 			bussinessUser = (ArrayList<BussinessUser>) message.getMsgData();
 			break;
 		case getallrestaurant:
 			getallresturant = (ArrayList<Resturaunt>) message.getMsgData();
 			break;
-		case GetOrderItems:
-			AllOrderItem= (ArrayList<ItemAddition>) message.getMsgData();
-			break;
+
 		case updateStatusofusers:
 
 			break;
-			
-		case DeleteOrder:
-			break;
-			
-		case CheckDelivery:
-			deliveryExists=(boolean)message.getMsgData();
-			break;
-		case GetAllOreders:	
-			AllOrder=(ArrayList<Order>) message.getMsgData();
-			break;
 		case GotW4C:
 			W4CC = (Integer) message.getMsgData();
-			break;
-		case getCompanyList:
-			CompanyList = (ArrayList<Company>) message.getMsgData();
-			break;
 
+			break;
 		case getallusers:
 			getlistofnormalaccount = (ArrayList<User>) message.getMsgData();
 			break;
@@ -218,7 +227,6 @@ public class ChatClient extends AbstractClient {
 		case updateandinsidebussinesstousers:
 			break;
 		case Createaccepttresturaunt:
-			ErrorMessage = (String) message.getMsgData();
 			break;
 		case W4C:
 			w4c = (W4CNormal) message.getMsgData();
@@ -232,27 +240,41 @@ public class ChatClient extends AbstractClient {
 		case QRcreateW4C:
 
 			break;
-		case GetAllWorker:
-			allworker= (ArrayList<WorkerUser>) message.getMsgData();
+
+		case getOrderID:
+			orderNum = (int) message.getMsgData();
 			break;
-		case AddNewWorker:
-			
-			ErrorMessage=(String) message.getMsgData();
+
+		case getIND:
+			ind = (int) message.getMsgData();
 			break;
-		case deleteworker:
+
+		case newOrder:
 			break;
-		case editworkers://new
+
+		case newDelivery:
 			break;
-		case GetAllitems:///new 
-			allItems=(ArrayList<Item>) message.getMsgData();
+
+		case soldItems:
+			break;
+		case updateW4CforBussiness:
+			break;
+
+		case partnersGroupNumber:
 
 			break;
-		case GetAllitemsfromitem:///new 
-			 
-			Items=(ArrayList<Item>) message.getMsgData();
+
+		case sharedGroup:
 			break;
-		case RemoveItemAddition:////new 
+		case getGroupNumber:
+			group_exist = (boolean) message.getMsgData();
 			break;
+
+		case updateTable:
+			// clients = (ArrayList<clientDetails>) message.getMsgData();
+
+			break;
+
 		default:
 			break;
 		}

@@ -15,16 +15,9 @@ public class MessagesClass implements Serializable
 	private Messages msgType;
 	private Object msgData;
 	private Object msgData1;
-	private Object msgData3;
+
 	private int month;
-	private String str;
-public String getStr() {
-		return str;
-	}
-	public void setStr(String str) {
-		this.str = str;
-	}
-private String w4c;
+
 	private int year;
 
 	private int ResID;
@@ -36,21 +29,12 @@ private String w4c;
 		this.msgData1=user1;
 		this.msgData2=norUser1;
 	}
-
-	public MessagesClass(Messages msgType, Object msgData, Object msgData1, String iDW4C) {
+	public MessagesClass(Messages msgType,int res,int month,int year) {
 		this.msgType = msgType;
-		this.msgData = msgData;
-		this.msgData1=msgData1;
-		this.w4c=iDW4C;
+		this.month=month;
+		this.year=year;
+		this.ResID=res;
 	}
-	public MessagesClass(Messages msgType, Object msgData, Object msgData1, Object msgData3 ,String iDW4C) {
-		this.msgType = msgType;
-		this.msgData = msgData;
-		this.msgData1=msgData1;
-		this.msgData3=msgData3;
-		this.w4c=iDW4C;
-	}
-	
 	public int getMonth() {
 		return month;
 	}
@@ -88,22 +72,6 @@ private String w4c;
 		this.msgType = msgType;
 		this.msgData = msgData;
 		this.setMsgData1(msgData1);
-	}
-	
-	public Object getMsgData3() {
-		return msgData3;
-	}
-	public void setMsgData3(Object msgData3) {
-		this.msgData3 = msgData3;
-	}
-	public String getW4c() {
-		return w4c;
-	}
-	public void setW4c(String w4c) {
-		this.w4c = w4c;
-	}
-	public void setMsgType(Messages msgType) {
-		this.msgType = msgType;
 	}
 	public Messages getMsgType() {
 		return msgType;

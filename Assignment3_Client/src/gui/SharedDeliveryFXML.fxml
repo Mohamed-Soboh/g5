@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="583.0" prefWidth="801.0" style="-fx-background-color: #555555;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SharedDeliveryController">
+   <children>
+      <Label layoutX="271.0" layoutY="28.0" text="Group Members" textFill="#eb8b00">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <Label layoutX="35.0" layoutY="116.0" text="Group Code: " textFill="#eb8b00">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Text fx:id="group_code" fill="#eb8b00" layoutX="191.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
+      <Button fx:id="finishBtn" layoutX="372.0" layoutY="510.0" mnemonicParsing="false" onAction="#EndSharedDelivery" text="Finish" />
+      <TableView fx:id="tableGroup" layoutX="191.0" layoutY="167.0" prefHeight="304.0" prefWidth="434.0">
+        <columns>
+          <TableColumn fx:id="colName" prefWidth="209.0" text="First Name" />
+          <TableColumn fx:id="colStatus" prefWidth="224.0" text="Status" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

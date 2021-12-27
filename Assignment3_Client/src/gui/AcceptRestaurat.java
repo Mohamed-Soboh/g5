@@ -7,7 +7,6 @@ import client.ChatClient;
 import client.ClientUI;
 import common.Messages;
 import common.MessagesClass;
-import common.RestaurantManager;
 import common.Resturaunt;
 import common.User;
 import javafx.collections.FXCollections;
@@ -29,15 +28,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-/**
- * @author moham
- *
- */
 public class AcceptRestaurat implements Initializable {
-
-	/**
-	 * listm for table view 
-	 */
+	//String username = ChatClient.branchManager.getFistName();
+	private static ObservableList<Resturaunt> temptable = FXCollections.observableArrayList();
 	ObservableList<Resturaunt> listM;
 	ObservableList<Resturaunt> dataList;
 	private URL location;
@@ -45,63 +38,30 @@ public class AcceptRestaurat implements Initializable {
 	private ResourceBundle resources;
 	@FXML
 	private Text HRusername;
-	/**
-	 * text field the name of restaurant
-	 */
 	@FXML
-	private TextField getRustaurantname;
+    private TextField getRustaurantname;
 
-	/**
-	 * combobox to know or to choose the location of restaurant
-	 */
-	@FXML
-	private ComboBox<String> Locationco;
+    @FXML
+    private ComboBox<String> Locationco;
 
-	/**
-	 * table view of all restaurant in manager location
-	 */
 	@FXML
 	private TableView<Resturaunt> table;
 
-	/**
-	 * id of restaurant
-	 */
 	@FXML
 	private TableColumn<Resturaunt, Integer> IDcl;
 
-	/**
-	 * restaurant name
-	 */
 	@FXML
 	private TableColumn<Resturaunt, String> resnamecl;
 
-	/**
-	 * restaurant location
-	 */
 	@FXML
 	private TableColumn<Resturaunt, String> locationcl;
 
-	/**
-	 * new id to add new restaurant
-	 */
 	@FXML
 	private TextField getID;
-	/**
-	 * path text
-	 */
-	@FXML
-	private Text pathtext;
-	/**
-	 * same to error message tell the manager if there is the same id in table 
-	 */
+
 	@FXML
 	private Text statustext;
 
-	/**
-	 * @param primaryStage 
-	 * @throws Exception
-	 * start method to open the accept restaurant gui and show us all the buttons and table
-	 */
 	public void start(Stage primaryStage) throws Exception {
 		FXMLLoader loader = new FXMLLoader();
 		Parent root = loader.load(this.getClass().getResource("/gui/AcceptRestaurant.fxml").openStream());
@@ -110,79 +70,66 @@ public class AcceptRestaurat implements Initializable {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
-
-	/**
-	 * @param event button action reset
-	 * reset all text fields
-	 */
-	@FXML
-	void ResetBT(ActionEvent event) {
-		getRustaurantname.setText("");
-		getID.setText("");
-		
-	}
-
-
-	/**
-	 * @param event accept action button
-	 * this method take all the information of new restaurant and send it to server 
-	 * check the id if exists in table or no 
-	 * if exists send error message and put it is status text if not add new restaurant and all the restaurant manager that 
-	 * come from external table can inside to there page and create menu and addition
-	 */
+ 
+  
+    @FXML
+    void ResetBT(ActionEvent event) {
+    	getRustaurantname.setText("");
+    	getID.setText("");
+    }
 	@FXML
 	void AcceptBT(ActionEvent event) {
 		if (getID.getText().isEmpty()) {
 			statustext.setText("Please,Put ID.");
 
 		} else {
-
-			Resturaunt resturaunt = new Resturaunt(Integer.parseInt(getID.getText()), getRustaurantname.getText(),
-					Locationco.getValue());
-			MessagesClass msg1 = new MessagesClass(Messages.Createaccepttresturaunt, resturaunt);
+			Resturaunt resturaunt = new Resturaunt(0, null, null,null);
+			resturaunt = new Resturaunt(Integer.parseInt(getID.getText()), getRustaurantname.getText(), Locationco.getValue(),null);
+			MessagesClass msg1 = new MessagesClass(Messages.Createaccepttresturaunt, resturaunt);// insert messageclass to help
+																							// me send information to																			// server
+			System.out.println(msg1);
 			ClientUI.chat.accept(msg1);
-			if (ChatClient.ErrorMessage.equals("updated")) {
-				statustext.setText("Updated");
-				table.getItems().clear();
-				initialize(location, resources);
-			} else {
-				statustext.setText(ChatClient.ErrorMessage);
-				return;
+			statustext.setText("Updated");
+			table.getItems().clear();
+			initialize(location, resources);
 
-			}
 		}
 	}
 
-	/**
-	 * @param event back button action 
-	 * return back to the branch manager home page 
-	 */
+
+
 	@FXML
 	void logOut(ActionEvent event) {
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.close();
-			BranchManagerHomePageController aFrame = new BranchManagerHomePageController();
-			Stage primaryStage = new Stage();
-			try {
-				aFrame.start(primaryStage);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		
+    	if(CeoHomePageController.GetCEO==null) {
+
+    		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    		stage.close();
+    		BranchManagerHomePageController aFrame = new BranchManagerHomePageController();
+    		Stage primaryStage = new Stage();
+    		try {
+    			aFrame.start(primaryStage);
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}}
+    		else
+    		{
+    			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    			stage.close();		}
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		pathtext.setText("ManagerPage->acceptRestaurant");
 		Locationco.getItems().removeAll(Locationco.getItems());
-		Locationco.getItems().addAll("North", "Center", "South");/**put in combox*/
+		Locationco.getItems().addAll("North", "Center", "South");
 		Locationco.getSelectionModel().select("North");
+		//HRusername.setText(username);
 		this.location = location;
-		this.resources = resources;/** send to server to get all the list*/
-		MessagesClass msg1 = new MessagesClass(Messages.getallrestaurant,
-				BranchManagerHomePageController.branchManager.getLocation());
+		this.resources = resources;
+ 		//System.out.println(ChatClient.branchManager.getLocation());
+		MessagesClass msg1 = new MessagesClass(Messages.getallrestaurant,null);
 		ClientUI.chat.accept(msg1);
-		listM = FXCollections.observableArrayList(ChatClient.getallresturant);/**get all data of (branchManager.getLocation()) restaurant*/
+		listM = FXCollections.observableArrayList(ChatClient.getallresturant);
+		
 		IDcl.setCellValueFactory(new PropertyValueFactory<Resturaunt, Integer>("resturauntID"));
 		resnamecl.setCellValueFactory(new PropertyValueFactory<Resturaunt, String>("resturaunt_Name"));
 		locationcl.setCellValueFactory(new PropertyValueFactory<Resturaunt, String>("location"));
@@ -191,10 +138,26 @@ public class AcceptRestaurat implements Initializable {
 
 	}
 
-	
-	/**
-	 * mouse action if i click in table i can hold all the information of restaunat
-	 */
+	public void Updatetable(int iD, String resturaunt_Name, String location) {
+		//
+//			
+		javafx.application.Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				// clientArrayList.add(new clientDetails(Host.toString(), IP, Status));
+				Resturaunt temp = new Resturaunt(iD, resturaunt_Name, location);
+//	public User(String firstName, String lastName, String iD, String email, String phoneN, String status) {
+
+				System.out.println("updated: " + temp);
+//					//clients.addAll(clientArrayList);new 
+//					temptable.add(temp);
+//					//tableServer.setItems(clients);
+//					///tableServer.refresh();
+//					
+			}
+		});
+	}
+
 	private void settext() {
 		table.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -202,7 +165,6 @@ public class AcceptRestaurat implements Initializable {
 			public void handle(MouseEvent event) {
 				Resturaunt w = table.getItems().get(table.getSelectionModel().getSelectedIndex());
 				getID.setText("" + w.getResturauntID() + "");
-				getRustaurantname.setText( w.getResturaunt_Name());
 			}
 
 		});

@@ -24,16 +24,15 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.mysql.cj.conf.ConnectionUrl.Type;
 
-import client.ChatClient;
 import javafx.fxml.Initializable;
 import common.Addition;
 import common.BranchManager;
 import common.CEOuser;
 import common.Category;
-import common.Company;
+import common.Delivery;
+import common.GroupDelivery;
 import common.HRUser;
 import common.Item;
-import common.ItemAddition;
 import common.Menu;
 import common.Normal;
 import common.Order;
@@ -54,15 +53,12 @@ public class mysqlConnection implements Initializable {
 	public static ArrayList<BussinessUser> requestsList;
 	public static ArrayList<User> getlistofnormalaccount;
 	public static ArrayList<User> usersfromBiteMeDB;
-	public static ArrayList<Item> Itemss;
-	public static ArrayList<Item> AllItems;
-	public static ArrayList<Company> companys;
+
 	public static ArrayList<Resturaunt> getAllresturaunt;
 	public static RestaurantManager restaurantManager;
 	public static WorkerUser WorkerUser;
 	public static BranchManager branchManager;
 	public static HRUser HRManager;
-	public static Normal Normaluser;
 	public static ArrayList<RestaurantReport> ReportList;
 	public static ArrayList<RestaurantReport> ReportListForManager;
 	public static Connection conn;
@@ -70,12 +66,6 @@ public class mysqlConnection implements Initializable {
 	public static ArrayList<Normal> NormalUsersNotAccepted;
 	public static BussinessUser BussinessUser;
 	public static CEOuser CEOuser1;
-	public static ArrayList<User> TakeAllUserThatNotConfiredyet;
-	public static ArrayList<User> userfrombitemedata;
-	public static ArrayList<Company> CompanyList;
-	public static ArrayList<Order> AllOrder;
-	public static ArrayList<Item> Allitemsoforders;
-	public static ArrayList<ItemAddition> itemsandAddition;
 
 	@SuppressWarnings("deprecation")
 	public static Connection connectToDB() {
@@ -91,7 +81,7 @@ public class mysqlConnection implements Initializable {
 		try {
 			String s1 = "jdbc:mysql://localhost/assignment3?serverTimezone=IST";
 			String s2 = "root";
-			String s3 = "mohamedsoboh132";
+			String s3 = "Aa123456";
 			conn = DriverManager.getConnection(s1, s2, s3);
 			System.out.println("SQL connection succeed");
 			return conn;
@@ -116,7 +106,7 @@ public class mysqlConnection implements Initializable {
 		try {
 			String s1 = "jdbc:mysql://localhost/biteme_data?serverTimezone=IST";
 			String s2 = "root";
-			String s3 = "mohamedsoboh132";
+			String s3 = "Aa123456";
 			conn = DriverManager.getConnection(s1, s2, s3);
 			System.out.println("SQL connection succeed To BiteMe DB");
 			return conn;
@@ -128,167 +118,259 @@ public class mysqlConnection implements Initializable {
 		}
 	}
 
-/////////////////////////////////////////////////////////////////
+	public static void updateW4CforBussiness(BussinessUser user) {
+		PreparedStatement ps;
 
-	public static void insidealldatafromBiteMeDB() throws SQLException {
-		userfrombitemedata = new ArrayList<User>();
-		Statement ps = conn.createStatement();
-		Statement ps1 = conn.createStatement();
-		ResultSet RS = ps.executeQuery("SELECT * From biteme_data.users");
-		User user = null;
-		while (RS.next()) {
+		try {
+			ps = conn.prepareStatement("UPDATE assignment3.w4cbussiness SET money= ? WHERE IDuser = ?");
+			ps.setDouble(1, user.getW4c().getMoney());
+			ps.setString(2, user.getID());
+			ps.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static boolean GetGroupNumber(int number) throws SQLException {
+		ResultSet rs = null;
+		String query = "select * from assignment3.group_delivery where code=" + number;
+		Statement st;
+		try {
+			st = conn.createStatement();
+			rs = st.executeQuery(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return rs.next();
+	}
+
+	public static void InsertGroup(GroupDelivery gp) {
+		String sql = "insert into assignment3.group_delivery (code,group_size) values (?,?)";
+		try {
+			PreparedStatement preparedStmt = conn.prepareStatement(sql);
+			preparedStmt.setInt(1, gp.getGroupNum());
+			preparedStmt.setInt(2, gp.getGroupSize());
+			preparedStmt.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void soldItems(Order solditems) {
+		Statement st;
+		ResultSet rs = null;
+		String sql;
+		int soldupdate = 0;
+		int updatesold = 0;
+		for (int i = 0; i < solditems.getItems().size(); i++) {
+			String query2 = "select quantity from assignment3.menu where IDRestaurant="
+					+ solditems.getRes().getResturauntID() + " and Item_ID=" + solditems.getItems().get(i).getItem_ID();
 			try {
-				user = new User(RS.getString(1), RS.getString(4), RS.getString(5), RS.getString(8), RS.getString(2),
-						RS.getString(6), RS.getString(7), RS.getString(3), RS.getString(14), RS.getString(13), 0,
-						Integer.parseInt(RS.getString(11)), RS.getString(12), Integer.parseInt(RS.getString(10)),
-						Integer.parseInt(RS.getString(15)));
-				userfrombitemedata.add(user);
-				String query = " insert into assignment3.users (ID,UserName,Password,UserType,IsLoggedIn,confirm,status)"
-						+ " values (?, ?, ?, ?, ?, ?, ?)";
+				st = conn.createStatement();
+				rs = st.executeQuery(query2);
+				if (rs.next() == true) {
+					updatesold = rs.getInt(1);
+					updatesold -= solditems.getItems().get(i).getQuantity();
+					sql = "UPDATE assignment3.menu SET quantity= ? where IDRestaurant="
+							+ solditems.getRes().getResturauntID() + " and Item_ID="
+							+ solditems.getItems().get(i).getItem_ID();
+					PreparedStatement preparedStmt = conn.prepareStatement(sql);
+					preparedStmt.setInt(1, updatesold);
+					preparedStmt.execute();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			String query = "select Sold from assignment3.solditem where IDRestaurant="
+					+ solditems.getRes().getResturauntID() + " and ItemID=" + solditems.getItems().get(i).getItem_ID()
+					+ " and Month=" + solditems.getMonth() + " and Year=" + solditems.getYear();
+			try {
+				st = conn.createStatement();
+				rs = st.executeQuery(query);
+				if (rs.next() == true) {
+					soldupdate = rs.getInt(1);
+					soldupdate += solditems.getItems().get(i).getQuantity();
+					sql = "UPDATE assignment3.solditem SET Sold= ? where IDRestaurant="
+							+ solditems.getRes().getResturauntID() + " and ItemID="
+							+ solditems.getItems().get(i).getItem_ID() + " and Month=" + solditems.getMonth()
+							+ " and Year=" + solditems.getYear();
+					PreparedStatement preparedStmt = conn.prepareStatement(sql);
+					preparedStmt.setInt(1, soldupdate);
+					preparedStmt.execute();
+
+				} else {
+					sql = "insert into assignment3.solditem (IDRestaurant,ItemID,Sold,Month,Year) values (?,?,?,?,?)";
+					PreparedStatement preparedStmt = conn.prepareStatement(sql);
+					preparedStmt.setInt(1, solditems.getRes().getResturauntID());
+					preparedStmt.setInt(2, solditems.getItems().get(i).getItem_ID());
+					preparedStmt.setInt(3, solditems.getItems().get(i).getQuantity());
+					preparedStmt.setInt(4, solditems.getMonth());
+					preparedStmt.setInt(5, solditems.getYear());
+					preparedStmt.execute();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public static void newDelivery(Delivery del) {
+		String query = " insert into assignment3.delivery (deliveryNum,orderNum,name,phonenumber,address,deliveryType,deliveryDate,clientTxt)"
+				+ " values (?, ?, ?, ?, ?, ?,?,?)";
+
+		try {
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			preparedStmt.setInt(1, del.getDeliveryNum());
+			preparedStmt.setInt(2, del.getOrderNum());
+			preparedStmt.setString(3, del.getFirstname());
+			preparedStmt.setString(4, del.getPhonenumber());
+			preparedStmt.setString(5, del.getAddress());
+			preparedStmt.setString(6, del.getDeliveryType());
+			preparedStmt.setString(7, del.getDate() + " " + del.getHour() + ":" + del.getMinute());
+			preparedStmt.setString(8, del.getClientText());
+			preparedStmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void newOrder(Order order) {
+		String query = " insert into assignment3.order (orderNum,RestaurantID,userID,submitDate,totalPrice,pickupTime)"
+				+ " values (?, ?, ?, ?, ?, ?)";
+		try {
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			preparedStmt.setInt(1, order.getOrderNum());
+			preparedStmt.setInt(2, order.getRes().getResturauntID());
+			preparedStmt.setString(3, order.getUser().getID());
+			preparedStmt.setString(4, order.getCurrentDateAndTime());
+			preparedStmt.setDouble(5, order.getTotalPrice());
+			preparedStmt.setString(6, order.getDate() + " " + order.getHour() + ":" + order.getMinute());
+			preparedStmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		query = "insert into assignment3.order_items (orderNum,item_ID,quantity) values(?,?,?)";
+		try {
+			for (int i = 0; i < order.getItems().size(); i++) {
 				PreparedStatement preparedStmt = conn.prepareStatement(query);
-				preparedStmt.setString(1, user.getID());
-				preparedStmt.setString(2, user.getUserName());
-				preparedStmt.setString(3, user.getPassword());
-				preparedStmt.setString(4, user.getUserType());
-				preparedStmt.setInt(5, 0);
-				preparedStmt.setInt(6, user.getConfirm());
-				preparedStmt.setString(7, user.getStatus());
+				preparedStmt.setInt(1, order.getOrderNum());
+				preparedStmt.setInt(2, order.getItems().get(i).getItem_ID());
+				preparedStmt.setInt(3, order.getItems().get(i).getQuantity());
 				preparedStmt.execute();
-			} catch (Exception e) {
-				System.out.println("importing data ...");
 			}
-			switch (user.getUserType()) {
-			case "BranchManager":
-				String query1 = " insert into assignment3.branchmanager (ID,FirstName,LastName,Email,PhoneNumber,location)"
-						+ " values (?, ?, ?, ?, ?, ?)";
-				PreparedStatement preparedStmt1 = conn.prepareStatement(query1);
-				preparedStmt1.setString(1, user.getID());
-				preparedStmt1.setString(2, user.getFirstname());
-				preparedStmt1.setString(3, user.getLastname());
-				preparedStmt1.setString(4, user.getEmail());
-				preparedStmt1.setString(5, user.getPhonenumber());
-				preparedStmt1.setString(6, user.getLocation());
-				preparedStmt1.execute();
-				break;
-			case "Normal":
-				String query2 = " insert into assignment3.normaluser (ID,FirstName,LastName,Email,Phone,VisaIsAvailable)"
-						+ " values (?, ?, ?, ?, ?, ?)";
-				PreparedStatement preparedStmt2 = conn.prepareStatement(query2);
-				preparedStmt2.setString(1, user.getID());
-				preparedStmt2.setString(2, user.getFirstname());
-				preparedStmt2.setString(3, user.getLastname());
-				preparedStmt2.setString(4, user.getEmail());
-				preparedStmt2.setString(5, user.getPhonenumber());
-				preparedStmt2.setInt(6, user.getVisaavailable());
-				preparedStmt2.execute();
-				break;
-			case "Bussiness":
-				String query3 = " insert into assignment3.bussinessuser (ID,FirstName,LastName,Email,PhoneNumber,Company)"
-						+ " values (?, ?, ?, ?, ?, ?)";
-				PreparedStatement preparedStmt3 = conn.prepareStatement(query3);
-				preparedStmt3.setString(1, user.getID());
-				preparedStmt3.setString(2, user.getFirstname());
-				preparedStmt3.setString(3, user.getLastname());
-				preparedStmt3.setString(4, user.getEmail());
-				preparedStmt3.setString(5, user.getPhonenumber());
-				preparedStmt3.setString(6, user.getCompany());
-				preparedStmt3.execute();
-				break;
-			case "CEO":
-				String query4 = " insert into assignment3.ceouser (ID,FirstName,LastName,Email,PhoneNumber)"
-						+ " values (?, ?, ?, ?, ?)";
-				PreparedStatement preparedStmt4 = conn.prepareStatement(query4);
-				preparedStmt4.setString(1, user.getID());
-				preparedStmt4.setString(2, user.getFirstname());
-				preparedStmt4.setString(3, user.getLastname());
-				preparedStmt4.setString(4, user.getEmail());
-				preparedStmt4.setString(5, user.getPhonenumber());
-				preparedStmt4.execute();
-				break;
-			case "RestaurantManager":
-				String query5 = " insert into assignment3.restaurantmanager (ID,FirstName,LastName,Email,PhoneNumber,IDRestaurant)"
-						+ " values (?, ?, ?, ?, ?,?)";
-				PreparedStatement preparedStmt5 = conn.prepareStatement(query5);
-				preparedStmt5.setString(1, user.getID());
-				preparedStmt5.setString(2, user.getFirstname());
-				preparedStmt5.setString(3, user.getLastname());
-				preparedStmt5.setString(4, user.getEmail());
-				preparedStmt5.setString(5, user.getPhonenumber());
-				preparedStmt5.setInt(6, user.getIdrestaurant());
-				preparedStmt5.execute();
-				break;
-			case "HR":
-				Statement stmt;
-				String query6 = " insert into assignment3.hruser (ID,FirstName,LastName,Email,PhoneNumber,Company)"
-						+ " values (?, ?, ?, ?, ?,?)";
-				PreparedStatement preparedStmt6 = conn.prepareStatement(query6);
-				preparedStmt6.setString(1, user.getID());
-				preparedStmt6.setString(2, user.getFirstname());
-				preparedStmt6.setString(3, user.getLastname());
-				preparedStmt6.setString(4, user.getEmail());
-				preparedStmt6.setString(5, user.getPhonenumber());
-				preparedStmt6.setString(6, user.getCompany());
-				preparedStmt6.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
-				break;
-			case "Worker":
-				String query7 = " insert into assignment3.restaurantworker (ID,FirstName,LastName,Email,PhoneNumber,restaurantWorker)"
-						+ " values (?, ?, ?, ?, ?,?)";
-				PreparedStatement preparedStmt7 = conn.prepareStatement(query7);
-				preparedStmt7.setString(1, user.getID());
-				preparedStmt7.setString(2, user.getFirstname());
-				preparedStmt7.setString(3, user.getLastname());
-				preparedStmt7.setString(4, user.getEmail());
-				preparedStmt7.setString(5, user.getPhonenumber());
-				preparedStmt7.setInt(6, user.getIdrestaurant());
-				preparedStmt7.execute();
-
-				break;
+	public static void order_items_additions(Object itemAddition) {
+		ArrayList<Item> item_addition = (ArrayList<Item>) itemAddition;
+		String query = "insert into assignment3.order_item_addition (orderNum,item_ID,name) values (?,?,?)";
+		/*
+		for (Item i : item_addition) {
+			for (Addition a : i.getAdditions()) {
+				try {
+					PreparedStatement preparedStmt = conn.prepareStatement(query);
+					preparedStmt.setInt(1, i.getOrderNum());
+					preparedStmt.setInt(2, i.getItem_ID());
+					preparedStmt.setString(3, a.getName());
+					preparedStmt.setInt(4, i.getIndex());
+					preparedStmt.execute();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}*/
+		for (Item i : item_addition) {
+			try {
+				PreparedStatement preparedStmt = conn.prepareStatement(query);
+				preparedStmt.setInt(1, i.getOrderNum());
+				preparedStmt.setInt(2, i.getItem_ID());
+				preparedStmt.setString(3, i.getAdditions_names());
+				//preparedStmt.setInt(4, i.getIndex());
+				preparedStmt.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 	}
 
-	public static void deletealldata() throws SQLException {
-		Statement ps = conn.createStatement();
-
-		PreparedStatement st, st1, st2 = null, st3 = null;
-
-		ResultSet rs = ps.executeQuery("SELECT * FROM assignment3.users where confirm=0");
-		while (rs.next() == true) {
-			String ID = rs.getString(1);
-			String type = rs.getString(4);
-
-			if (type.equals("Normal")) {
-				st = conn.prepareStatement("DELETE FROM assignment3.normaluser  where ID='" + ID + "'");
-				st.executeUpdate();
-			} else if (type.equals("Bussiness")) {
-				st = conn.prepareStatement("DELETE FROM assignment3.bussinessuser  where ID='" + ID + "'");
-				st.executeUpdate();
-			} else if (type.equals("BranchManager")) {
-				st = conn.prepareStatement("DELETE FROM assignment3.branchmanager");
-				st.executeUpdate();
-			} else if (type.equals("CEO")) {
-				st = conn.prepareStatement("DELETE FROM assignment3.ceouser");
-				st.executeUpdate();
-			} else if (type.equals("RestaurantManager")) {
-				st = conn.prepareStatement("DELETE FROM assignment3.restaurantmanager");
-				st.executeUpdate();
-			} else if (type.equals("HR")) {
-				st = conn.prepareStatement("DELETE FROM assignment3.hruser");
-				st.executeUpdate();
-			} else if (type.equals("Worker")) {
-				st = conn.prepareStatement("DELETE FROM assignment3.restaurantworker");
-				st.executeUpdate();
+	public static int getOrderID() {
+		Statement st;
+		ResultSet rs = null;
+		int orderNum = 0;
+		try {
+			st = conn.createStatement();
+			rs = st.executeQuery("SELECT COUNT(*) FROM assignment3.order");
+			if (rs.next()) {
+				orderNum = rs.getInt(1);
+				if (orderNum == 0)
+					return orderNum;
 			}
+			rs = st.executeQuery("SELECT * FROM assignment3.order ORDER BY orderNum DESC LIMIT 1");
+			if (rs.next()) {
+				orderNum = rs.getInt(1);
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		st = conn.prepareStatement("DELETE FROM assignment3.users WHERE confirm = ?");
-		st.setInt(1, 0);
-		st.executeUpdate();
+		return orderNum;
+	}
+	
+	public static int getIND() {
+		Statement st;
+		ResultSet rs = null;
+		int ind = 0;
+		try {
+			st = conn.createStatement();
+			rs = st.executeQuery("SELECT COUNT(*) FROM assignment3.order_item_addition");
+			if (rs.next()) {
+				ind = rs.getInt(1);
+				if (ind == 0)
+					return ind;
+			}
+			rs = st.executeQuery("SELECT * FROM assignment3.order_item_addition ORDER BY ind DESC LIMIT 1");
+			if (rs.next()) {
+				ind = rs.getInt(4);
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return ind;
 	}
 
-	// public WorkerUser(String userID, String firstName, String lastName, String
-	// userName, String password, String email,
-	// String phoneNumber, int iDRestaurant) {
+	public static Normal getNormalUser(User user) throws SQLException {
+		Normal nuser = null;
+
+		Statement st;
+		ResultSet rs = null;
+		try {
+			st = conn.createStatement();
+			rs = st.executeQuery("Select * from assignment3.normaluser where ID=" + user.getID());
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		if (rs.next()) {
+			try {
+				nuser = new Normal(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return nuser;
+
+	}
+
 	public static void LogOutAllAccounts() throws SQLException {
 		PreparedStatement ps;
 
@@ -297,275 +379,7 @@ public class mysqlConnection implements Initializable {
 		ps.executeUpdate();
 	}
 
-	public static String AddNewUser(User user, Object msgData1, String table) throws SQLException {
-		PreparedStatement st;
-		try {
-			Statement stmt = conn.createStatement();
-
-			ResultSet rs1 = stmt
-					.executeQuery("SELECT * FROM assignment3.bussinessuser where ID='" + user.getID() + "'");
-			if (rs1.next() == true) {
-				return "IDAlreadyExists";
-			}
-			ResultSet rs3 = stmt.executeQuery("SELECT * FROM assignment3.normaluser where ID='" + user.getID() + "'");
-			if (rs3.next() == true) {
-				return "IDAlreadyExists";
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (table.equals("normaluser")) {
-			W4CNormal w4c = (W4CNormal) msgData1;
-			String code = String.valueOf(w4c.getCode());
-			String query1 = " insert into assignment3.normaluser (ID,FirstName,LastName,Email,Phone,VisaIsAvailable)"
-					+ " values (?, ?, ?, ?, ?, ?)";
-			PreparedStatement preparedStmt1 = conn.prepareStatement(query1);
-			preparedStmt1.setString(1, user.getID());
-			preparedStmt1.setString(2, user.getFirstname());
-			preparedStmt1.setString(3, user.getLastname());
-			preparedStmt1.setString(4, user.getEmail());
-			preparedStmt1.setString(5, user.getPhonenumber());
-			preparedStmt1.setInt(6, user.getVisaavailable());
-			preparedStmt1.execute();
-
-			String query6 = " insert into assignment3.w4cnormal (code,IDuser)" + " values (?, ?)";
-			PreparedStatement preparedStmt6 = conn.prepareStatement(query6);
-			preparedStmt6.setString(1, code);
-			preparedStmt6.setString(2, w4c.getUser().getID());
-			preparedStmt6.execute();
-
-		} else {
-			W4CBussiness w4c = (W4CBussiness) msgData1;
-			String code = String.valueOf(w4c.getCode());
-			String query2 = " insert into assignment3.bussinessuser (ID,FirstName,LastName,Email,PhoneNumber,Company)"
-					+ " values (?, ?, ?, ?, ?, ?)";
-			PreparedStatement preparedStmt2 = conn.prepareStatement(query2);
-			preparedStmt2.setString(1, user.getID());
-			preparedStmt2.setString(2, user.getFirstname());
-			preparedStmt2.setString(3, user.getLastname());
-			preparedStmt2.setString(4, user.getEmail());
-			preparedStmt2.setString(5, user.getPhonenumber());
-			preparedStmt2.setString(6, user.getCompany());
-			preparedStmt2.execute();
-
-			String query4 = " insert into assignment3.w4cbussiness (code,money,IDuser)" + " values (?, ?, ?)";
-			PreparedStatement preparedStmt4 = conn.prepareStatement(query4);
-			preparedStmt4.setString(1, code);
-			preparedStmt4.setDouble(2, w4c.getMoney());
-			preparedStmt4.setString(3, w4c.getUser().getID());
-			preparedStmt4.execute();
-
-		}
-		PreparedStatement ps;
-		ps = conn.prepareStatement("UPDATE assignment3.users SET confirm= ? , status= ? , UserType=? WHERE ID = ?");
-		ps.setInt(1, 1);
-		ps.setString(2, "Active");
-		ps.setString(3, user.getUserType());
-		ps.setString(4, user.getID());
-		ps.executeUpdate();
-
-		return "updated";
-	}
-
-	public static String AddNewUserwithvisa(User user, Object msgData1, Visa visa, String table) throws SQLException {
-		String str = AddNewUser(user, msgData1, table);
-		String query1 = " insert into assignment3.visa (userID,Number,CVV,Year,CardHolderName,Month)"
-				+ " values (?, ?, ?, ?, ?, ?)";
-		PreparedStatement preparedStmt1 = conn.prepareStatement(query1);
-		preparedStmt1.setString(1, visa.getUserID());
-		preparedStmt1.setString(2, visa.getNumber());
-		preparedStmt1.setInt(3, visa.getCVV());
-		preparedStmt1.setInt(4, visa.getYear());
-		preparedStmt1.setString(5, visa.getCardHolderName());
-		preparedStmt1.setInt(6, visa.getMonth());
-		preparedStmt1.execute();
-		PreparedStatement ps;
-
-		ps = conn.prepareStatement("UPDATE assignment3.normaluser SET VisaIsAvailable= ? WHERE ID = ?");
-		ps.setInt(1, 1);
-		ps.setString(2, user.getID());
-		ps.executeUpdate();
-
-		return str;
-	}
-
-	public static void confirmCompane(String cname) throws SQLException {
-		Statement stmt;
-		stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM assignment3.company where companyname='" + cname + "'");
-		if (rs.next() != true) {
-			String query1 = " insert into assignment3.company (companyname,confirm)" + " values (?, ?)";
-			PreparedStatement preparedStmt1 = conn.prepareStatement(query1);
-			preparedStmt1.setString(1, cname);
-			preparedStmt1.setInt(2, 0);
-			preparedStmt1.execute();
-		}
-	}
-
-	public static void companyConfirm(String cname) throws SQLException {
-		PreparedStatement ps;
-		ps = conn.prepareStatement("UPDATE assignment3.company SET confirm= ? WHERE companyname = ?");
-		ps.setInt(1, 1);
-		ps.setString(2, cname);
-		ps.executeUpdate();
-	}
-
-	public static ArrayList<Company> getCompanyList() {
-		Statement stmt;
-		CompanyList = new ArrayList<Company>();
-		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM assignment3.company where confirm='" + 0 + "'");
-			while (rs.next() == true) {
-				Company company = new Company(rs.getString(1), rs.getInt(2));
-				CompanyList.add(company);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return CompanyList;
-	}
-
-	public static ArrayList<User> TakeAllUserThatNotConfiredyet() throws SQLException {
-		TakeAllUserThatNotConfiredyet = new ArrayList<>();
-		Statement ps = conn.createStatement();
-		ResultSet RS = ps.executeQuery("SELECT * From assignment3.users where UserType= 'null'");
-		User users;
-		while (RS.next()) {
-			String id = RS.getString(1);
-
-			for (int i = 0; i < userfrombitemedata.size(); i++) {
-				if (id.equals(userfrombitemedata.get(i).getID())) {
-					TakeAllUserThatNotConfiredyet.add(userfrombitemedata.get(i));
-				}
-			}
-		}
-		return TakeAllUserThatNotConfiredyet;
-	}
-
-	public static ArrayList<Company> GetallAvailableCompany() throws SQLException {
-		companys = new ArrayList<Company>();
-		Statement ps = conn.createStatement();
-		ResultSet RS = ps.executeQuery("SELECT* From assignment3.company where confirm=1");
-		Company company;
-		while (RS.next()) {
-			company = new Company(RS.getString(1), Integer.parseInt(RS.getString(2)));
-			companys.add(company);
-		}
-		return companys;
-
-	}
-
-	///////////////
-	public static ArrayList<Order> GetAllOrder(int id) throws NumberFormatException, SQLException {
-		AllOrder = new ArrayList<Order>();
-		Statement ps = conn.createStatement();
-		ResultSet RS = ps.executeQuery("SELECT* From assignment3.order where RestaurantID='" + id + "'");
-		Order order;
-		while (RS.next()) {
-			order = new Order(Integer.parseInt(RS.getString(1)), Double.parseDouble(RS.getString(5)), RS.getString(4),
-					RS.getString(6), RS.getString(3));
-			AllOrder.add(order);
-		}
-		return AllOrder;
-	}
-
-	/////////////////////
-	public static void UpdateItem(Item item, String str) throws SQLException {
-		PreparedStatement ps, ps1;
-		ps1 = conn.prepareStatement("UPDATE assignment3.menu SET quantity= ? WHERE Item_ID = ?");
-		ps1.setInt(1, item.getQuantity());
-		ps1.setInt(2, item.getItem_ID());
-		ps1.executeUpdate();
-		ps = conn.prepareStatement("UPDATE assignment3.item SET Item_name= ?, Item_price=? WHERE Item_ID = ?");
-		ps.setString(1, item.getItem_Name());
-		ps.setDouble(2, item.getPrice());
-		ps.setInt(3, item.getItem_ID());
-		ps.executeUpdate();
-
-	}
-
-//////////////////
-	public static void RemoveItem(Item item) throws SQLException {
-		PreparedStatement st, st1;
-		st1 = conn.prepareStatement("DELETE FROM assignment3.menu WHERE Item_ID = ?");
-		st1.setInt(1, item.getItem_ID());
-		st1.executeUpdate();
-		st = conn.prepareStatement("DELETE FROM assignment3.item WHERE Item_ID = ?");
-		st.setInt(1, item.getItem_ID());
-		st.executeUpdate();
-
-	}
-
-	//////////////////
-	public static void RemoveItemAddition(Item item, String addition) throws SQLException {
-		PreparedStatement st, st1;
-		st = conn.prepareStatement("DELETE FROM assignment3.item_addition WHERE name=? and Item_ID = ?");
-		st.setString(1, addition);
-		st.setInt(2, item.getItem_ID());
-		st.executeUpdate();
-
-		st1 = conn.prepareStatement("DELETE FROM assignment3.addition WHERE name = ?");
-		st1.setString(1, addition);
-		st1.executeUpdate();
-
-	}
-
-	/////////////////
-	public static void AddItems(Item item, Addition addition, int resid, String str) throws SQLException {
-		if (addition == null) {
-			String query = " insert into assignment3.item (item_ID,Item_name,Item_price,category)"
-					+ " values (?, ?,?,?)";
-			PreparedStatement preparedStmt = conn.prepareStatement(query);
-			preparedStmt.setInt(1, item.getItem_ID());
-			preparedStmt.setString(2, item.getItem_Name());
-			preparedStmt.setDouble(3, item.getPrice());
-			preparedStmt.setString(4, str);
-			preparedStmt.execute();
-			String query1 = " insert into assignment3.menu (IDRestaurant,item_ID,quantity)" + " values (?, ?,?)";
-			PreparedStatement preparedStmt1 = conn.prepareStatement(query1);
-			preparedStmt1.setInt(1, resid);
-			preparedStmt1.setInt(2, item.getItem_ID());
-			preparedStmt1.setInt(3, item.getQuantity());
-			preparedStmt1.execute();
-		} else {
-			String query = " insert into assignment3.addition (name)" + " values (?)";
-			PreparedStatement preparedStmt = conn.prepareStatement(query);
-			preparedStmt.setString(1, addition.getName());
-			preparedStmt.execute();
-			String query2 = " insert into assignment3.item_addition (item_ID,name)" + " values (?, ?)";
-			PreparedStatement preparedStmt2 = conn.prepareStatement(query2);
-			preparedStmt2.setInt(1, item.getItem_ID());
-			preparedStmt2.setString(2, addition.getName());
-			preparedStmt2.execute();
-
-		}
-	}
-
-	public static ArrayList<WorkerUser> GetAllWorkers(int id) throws Exception// get all worker
-	{
-		ArrayList<WorkerUser> allworker = new ArrayList<WorkerUser>();
-		Statement ps = conn.createStatement();
-		Statement ps1 = conn.createStatement();
-		WorkerUser WorkerUser;
-		ResultSet RS = ps
-				.executeQuery("SELECT * From assignment3.restaurantworker where restaurantWorker='" + id + "'");
-		while (RS.next()) {
-			String idres = RS.getString(1);
-			ResultSet RS1 = ps1.executeQuery("SELECT * From assignment3.users where ID='" + idres + "'");
-			if (RS1.next()) {
-				WorkerUser = new WorkerUser(RS1.getString(1), RS.getString(2), RS.getString(3), RS1.getString(2),
-						RS1.getString(3), RS.getString(4), RS.getString(5), id);
-				WorkerUser.setRestaurantName(getrestaurantname(id).getResturaunt_Name());
-				allworker.add(WorkerUser);
-
-			}
-		}
-		return allworker;
-	}
-
 	public static void UpdateStatusOfUsers(User user1) throws SQLException {
-		// System.out.println("user status updated ...." + user1.getUserName());
 		PreparedStatement ps;
 
 		ps = conn.prepareStatement("UPDATE assignment3.users SET status= ? WHERE ID = ?");
@@ -575,85 +389,13 @@ public class mysqlConnection implements Initializable {
 
 	}
 
-	public static void BussinessAccountHasBeenAccepted(User user) throws SQLException {/// this method that accepted
+	public static void BussinessAccountHasBeenAccepted(User user) throws SQLException {
 		PreparedStatement ps;
 		ps = conn.prepareStatement("UPDATE assignment3.users SET confirm= ? , status= ? WHERE ID = ?");
-		ps.setString(1, "1");
+		ps.setInt(1, 1);
 		ps.setString(2, "Active");
-
 		ps.setString(3, user.getID());
 		ps.executeUpdate();
-	}
-
-	// add new business account
-	public static String InsertNewBussinessAccount(User user, BussinessUser bussinessUser, String str)
-			throws SQLException {
-
-		System.out.println("i am getting into login query");
-		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM assignment3.users where UserName='" + user.getUserName() + "'");
-			if (rs.next() == true) {
-				return "UserNameAlreadyExists";
-			}
-			ResultSet rs1 = stmt.executeQuery("SELECT * FROM assignment3.users where ID='" + user.getID() + "'");
-			if (rs1.next() == true) {
-				return "IDAlreadyExists";
-			}
-
-			String query = " insert into assignment3.users (ID,UserName,Password,UserType,IsLoggedIn,confirm,status)"
-					+ " values (?, ?, ?, ?, ?, ?, ?)";
-			PreparedStatement preparedStmt = conn.prepareStatement(query);
-			preparedStmt.setString(1, user.getID());
-			preparedStmt.setString(2, user.getUserName());
-			preparedStmt.setString(3, user.getPassword());
-			preparedStmt.setString(4, user.getUserType());
-			preparedStmt.setInt(5, user.getIsLoggedIn());
-			preparedStmt.setInt(6, user.getConfirm());
-			preparedStmt.setString(7, user.getStatus());
-			preparedStmt.execute();
-
-			String query1 = " insert into assignment3.bussinessuser (ID,FirstName,LastName,PhoneNumber,Email,Company)"
-					+ " values (?, ?, ?, ?, ?, ?)";
-			PreparedStatement preparedStmt1 = conn.prepareStatement(query1);
-			preparedStmt1.setString(1, bussinessUser.getID());
-			preparedStmt1.setString(2, bussinessUser.getFirstName());
-			preparedStmt1.setString(3, bussinessUser.getLastName());
-			preparedStmt1.setString(4, bussinessUser.getPhoneNumber());
-			preparedStmt1.setString(5, bussinessUser.getEmail());
-			preparedStmt1.setString(6, bussinessUser.getCompany());
-			preparedStmt1.execute();
-
-			String query2 = " insert into assignment3.w4cbussiness (code,money,IDuser)" + " values (?, ?, ?)";
-			PreparedStatement preparedStmt2 = conn.prepareStatement(query2);
-			preparedStmt2.setString(1, str);
-			preparedStmt2.setFloat(2, bussinessUser.getW4C());
-			preparedStmt2.setString(3, bussinessUser.getID());
-			preparedStmt2.execute();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return "Updated";
-	}
-
-	// add new bussiness account with visa
-	static String InsertNewBussinessAccountWithVisa(Visa visa, User user, BussinessUser bussinessUser, String str)
-			throws SQLException {
-		String value = InsertNewBussinessAccount(user, bussinessUser, str);
-		String query1 = " insert into assignment3.visa (userID,Number,CVV,Year,CardHolderName,Month)"
-				+ " values (?, ?, ?, ?, ?, ?)";
-		PreparedStatement preparedStmt1 = conn.prepareStatement(query1);
-		preparedStmt1.setString(1, visa.getUserID());
-		preparedStmt1.setString(2, visa.getNumber());
-		preparedStmt1.setInt(3, visa.getCVV());
-		preparedStmt1.setInt(4, visa.getYear());
-		preparedStmt1.setString(5, visa.getCardHolderName());
-		preparedStmt1.setInt(6, visa.getMonth());
-		preparedStmt1.execute();
-		return value;
-
 	}
 
 	static int IDForW4C() {
@@ -715,15 +457,16 @@ public class mysqlConnection implements Initializable {
 			preparedStmt.setString(7, user.getStatus());
 			preparedStmt.execute();
 
-			String query1 = " insert into assignment3.bussinessuser (ID,FirstName,LastName,PhoneNumber,Email,Company)"
-					+ " values (?, ?, ?, ?, ?, ?)";
+			String query1 = " insert into assignment3.bussinessuser (ID,FirstName,LastName,PhoneNumber,Email,W4C,Company)"
+					+ " values (?, ?, ?, ?, ?, ?, ?)";
 			PreparedStatement preparedStmt1 = conn.prepareStatement(query1);
 			preparedStmt1.setString(1, bussinessUser.getID());
 			preparedStmt1.setString(2, bussinessUser.getFirstName());
 			preparedStmt1.setString(3, bussinessUser.getLastName());
 			preparedStmt1.setString(4, bussinessUser.getPhoneNumber());
 			preparedStmt1.setString(5, bussinessUser.getEmail());
-			preparedStmt1.setString(6, bussinessUser.getCompany());
+			preparedStmt1.setFloat(6, bussinessUser.getW4C());
+			preparedStmt1.setString(7, bussinessUser.getCompany());
 			preparedStmt1.execute();
 
 		} catch (SQLException e) {
@@ -776,20 +519,17 @@ public class mysqlConnection implements Initializable {
 
 	public static void updateClientStatus(User user, int status) {
 		System.out.println("user status updated ...." + user.getUserName());
-		PreparedStatement ps, rs;
+		PreparedStatement ps;
 		try {
+			System.out.print(user);
 			ps = conn.prepareStatement("UPDATE assignment3.users SET IsLoggedIn= ? WHERE UserName = ?");
 			ps.setInt(1, status);
 			ps.setString(2, user.getUserName());
-
-			if (ps.executeUpdate() != 0) {
-				System.out.println("update " + user.getUserName() + " status to:" + status);
-
+			ps.executeUpdate();
+			if (ps.executeUpdate() == 0) {
+				System.out.println("Table Update Error!");
 			} else {
-				rs = conn.prepareStatement("UPDATE bitemeuser SET IsLoggedIn= ? WHERE UserName = ?");
-				rs.setInt(1, status);
-				rs.setString(2, user.getUserName());
-				rs.executeUpdate();
+				System.out.println("update " + user.getUserName() + " status to:" + status);
 			}
 		} catch (SQLException e) {
 // TODO Auto-generated catch block
@@ -799,7 +539,9 @@ public class mysqlConnection implements Initializable {
 	}
 
 	public static void deleteId(String id, String sqltable) throws SQLException {
-		PreparedStatement st, st1, st2 = null, st3 = null;
+		System.out.println(id + "111111");
+		System.out.println(sqltable + "222222222");
+		PreparedStatement st, st1, st2 = null;
 		if (sqltable.equals("normaluser")) {
 			st = conn.prepareStatement("DELETE FROM assignment3.normaluser WHERE ID = ?");
 			st.setString(1, id);
@@ -813,9 +555,9 @@ public class mysqlConnection implements Initializable {
 			st.setInt(1, Integer.parseInt(id));
 			st.executeUpdate();
 		} else
-			st3 = conn.prepareStatement("DELETE FROM assignment3.bussinessuser WHERE ID = ?");
-		st3.setString(1, id);
-		st3.executeUpdate();
+			st = conn.prepareStatement("DELETE FROM assignment3.bussinessuser WHERE ID = ?");
+		st.setString(1, id);
+		st.executeUpdate();
 		st2 = conn.prepareStatement("DELETE FROM assignment3.users WHERE ID = ?");
 		st2.setString(1, id);
 		st2.executeUpdate();
@@ -827,16 +569,17 @@ public class mysqlConnection implements Initializable {
 		try {
 			Statement ps = conn.createStatement();
 			Statement ps1 = conn.createStatement();
-			ResultSet RS = ps
-					.executeQuery("SELECT * From assignment3.users where UserType='Bussiness' and status='Frozen'");
+			ResultSet RS = ps.executeQuery("SELECT * From assignment3.users where UserType='Bussiness' and confirm=0");
 			BussinessUser request;
 			while (RS.next()) {
+//				request = new BussinessUser(RS.getString(1), RS.getString(2), RS.getString(3), RS.getString(4),
+//						RS.getString(5), Float.parseFloat(RS.getString(6)), RS.getString(7), 0);
 				String id = RS.getString(1);
 				ResultSet RS1 = ps1.executeQuery(
 						"SELECT * From assignment3.bussinessuser where ID='" + id + "'and Company='" + company + "'");
 				if (RS1.next()) {
 					request = new BussinessUser(RS1.getString(1), RS1.getString(2), RS1.getString(3), RS1.getString(4),
-							RS1.getString(5), 0, RS1.getString(6), 0);
+							RS1.getString(5), Float.parseFloat(RS1.getString(6)), RS1.getString(7), 0);
 					requestsList.add(request);
 
 				}
@@ -880,6 +623,7 @@ public class mysqlConnection implements Initializable {
 						Integer.parseInt(rs.getString(5)), Integer.parseInt(rs.getString(6)), rs.getString(7));
 				usersfromBiteMeDB.add(request);
 			}
+			System.out.print(usersfromBiteMeDB);
 
 		} catch (SQLException e) {
 // TODO Auto-generated catch block
@@ -905,11 +649,11 @@ public class mysqlConnection implements Initializable {
 		}
 	}
 
-	static void getAllResturaunt(String location) {
+	static void getAllResturaunt() {
 		getAllresturaunt = new ArrayList<Resturaunt>();
 		try {
 			Statement ps = conn.createStatement();
-			ResultSet RS = ps.executeQuery("SELECT * from assignment3.restaurant where location='" + location + "'");
+			ResultSet RS = ps.executeQuery("SELECT * from assignment3.restaurant");
 
 			Resturaunt request;
 			while (RS.next()) {
@@ -977,25 +721,18 @@ public class mysqlConnection implements Initializable {
 	}
 
 	static RestaurantManager GetRestaurantManager(User user) {
-		Statement stmt, stmt1;
+		Statement stmt;
 		int status;
 		try {
-			stmt1 = conn.createStatement();
 			stmt = conn.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM assignment3.restaurantmanager where ID='" + user.getID() + "'");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM restaurantmanager where ID='" + user.getID() + "'");
 			if (rs.next() == true) {
 				System.out.println("I'm getting RestaurantManager from DB");
+				restaurantManager = new RestaurantManager(rs.getString(1), rs.getString(2), rs.getString(3),
+						rs.getString(4), rs.getString(5), Integer.parseInt(rs.getString(6)));
+				System.out.println(restaurantManager);
 
-				ResultSet rs1 = stmt1.executeQuery("SELECT * FROM assignment3.restaurant where IDRestaurant='"
-						+ Integer.parseInt(rs.getString(6)) + "'");
-				if (rs1.next() == true) {
-					restaurantManager = new RestaurantManager(rs.getString(1), rs.getString(2), rs.getString(3),
-							rs.getString(4), rs.getString(5), Integer.parseInt(rs.getString(6)));
-					System.out.println(restaurantManager);
-
-					return restaurantManager;
-				}
+				return restaurantManager;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1003,54 +740,6 @@ public class mysqlConnection implements Initializable {
 		System.out.println("Error in finding !!!");
 		return null;
 
-	}
-	
-	public static void deleteOrder(int orderid)
-	{
-		Statement stmt;
-		try {
-			String SQL = "delete from assignment3.order where orderNum=?";
-			PreparedStatement pstmt = null;
-
-			// get a connection and then in your try catch for executing your delete...
-
-			pstmt = conn.prepareStatement(SQL); 
-			pstmt.setInt(1, orderid);
-			pstmt.executeUpdate();
-			SQL="delete from assignment3.order_items where orderNum=?";
-			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, orderid);
-			pstmt.executeUpdate();
-			SQL="delete from assignment3.order_item_addition where orderNum=?";
-			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, orderid);
-			pstmt.executeUpdate();
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static boolean CheckDelivery(int orderid)
-	{
-		String sql="select COUNT(*) from assignment3.delivery where orderNum="+orderid;
-		Statement st = null;
-		try {
-			st = conn.createStatement();
-			ResultSet rs=st.executeQuery(sql);
-			if(rs.next()==true)
-			{
-				String SQL = "delete from assignment3.delivery where orderNum=?";
-				PreparedStatement pstmt = null;
-				pstmt = conn.prepareStatement(SQL); 
-				pstmt.setInt(1, orderid);
-				pstmt.executeUpdate();
-				return true;
-			}
-				
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
 	}
 
 	static WorkerUser GetRestaurantWorker(User user) {///////////////////////////////////////////
@@ -1074,73 +763,12 @@ public class mysqlConnection implements Initializable {
 
 	}
 
-	private static String getitemname(int itemid) throws SQLException {
-		Statement stmt, stmt1;
-		stmt1 = conn.createStatement();
-		String str = null;
-		ResultSet rs1 = stmt1.executeQuery("SELECT * FROM assignment3.item where Item_ID='" + itemid + "'");
-		if (rs1.next() == true) {
-			str = rs1.getString(2);
-
-		}
-		return str;
-	}
-
-/////////////////////////////////////
-	public static ArrayList<ItemAddition> GetallOrederItems(int ordernum) throws SQLException {
-		Statement stmt, stmt1;
-
-		stmt = conn.createStatement();
-		stmt1 = conn.createStatement();
-		 ArrayList<ItemAddition> itemsandAddition1 = new ArrayList<>();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM assignment3.order_item_addition where orderNum='" + ordernum + "'");
-		while (rs.next() ) {
-			int itemid = rs.getInt(2);
-			String str = rs.getString(3);
-			ItemAddition a=(new ItemAddition(getitemname(itemid), str));
-			itemsandAddition1.add(a);
-		}
-		System.out.print("****&****");
-		System.out.print(itemsandAddition1);
-		return itemsandAddition1;
-	}
-
-	public static String getuser(String id) throws SQLException {
-		Statement stmt, stmt1;
-		int status;
-		String mail = null;
-		stmt = conn.createStatement();
-		stmt1 = conn.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM assignment3.users where ID='" + id + "'");
-		if (rs.next() == true) {
-			String type = rs.getString(4);
-			switch (type) {
-			case "Normal":
-				ResultSet rs1 = stmt1.executeQuery("SELECT * FROM assignment3.normaluser where ID='" + id + "'");
-				if (rs1.next() == true) {
-					mail = rs1.getString(4);
-					return mail;
-				}
-				break;
-			case "Bussiness":
-				ResultSet rs2 = stmt1.executeQuery("SELECT * FROM assignment3.bussinessuser where ID='" + id + "'");
-				if (rs2.next() == true) {
-					mail = rs2.getString(4);
-					return mail;
-				}
-				break;
-
-			}
-		}
-		return mail;
-	}
-
 	static BranchManager GetBranchManager(User user) {
 		Statement stmt;
 		int status;
 		try {
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM assignment3.branchmanager where ID='" + user.getID() + "'");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM branchmanager where ID='" + user.getID() + "'");
 			if (rs.next() == true) {
 				branchManager = new BranchManager(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
 						rs.getString(5), rs.getString(6));
@@ -1159,7 +787,7 @@ public class mysqlConnection implements Initializable {
 		int status;
 		try {
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM assignment3.ceouser where ID='" + user.getID() + "'");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ceouser where ID='" + user.getID() + "'");
 			if (rs.next() == true) {
 				CEOuser1 = new CEOuser(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
 						rs.getString(5));
@@ -1173,15 +801,33 @@ public class mysqlConnection implements Initializable {
 
 	}
 
+	public static W4CBussiness getW4CBussiness(User user) {
+		W4CBussiness w4c = null;
+		Statement stmt;
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM assignment3.w4cbussiness where IDuser=" + user.getID());
+			if (rs.next()) {
+				w4c = new W4CBussiness(rs.getInt(1), user, rs.getDouble(2));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return w4c;
+	}
+
 	static BussinessUser GetBissnessUser(User user) {
 		Statement stmt;
 		int status;
+
 		try {
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM assignment3.bussinessuser where ID='" + user.getID() + "'");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM assignment3.bussinessuser where ID=" + user.getID());
 			if (rs.next() == true) {
-				BussinessUser = new BussinessUser(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(5),
-						rs.getString(4), rs.getString(6));
+				W4CBussiness w4c = getW4CBussiness(user);
+				// System.out.println(w4c.toString());
+				BussinessUser = new BussinessUser(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
+						rs.getString(5), rs.getString(6), w4c);
 				return BussinessUser;
 			}
 		} catch (SQLException e) {
@@ -1208,9 +854,9 @@ public class mysqlConnection implements Initializable {
 		int status;
 		try {
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * From assignment3.hruser where ID='" + user.getID() + "'");
+			ResultSet rs = stmt.executeQuery("SELECT * From hruser where ID='" + user.getID() + "'");
 			if (rs.next() == true) {
-				HRManager = new HRUser(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(6));
+				HRManager = new HRUser(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
 				return HRManager;
 			}
 		} catch (SQLException e) {
@@ -1219,23 +865,6 @@ public class mysqlConnection implements Initializable {
 		System.out.println("Error in finding !!!");
 		return null;
 
-	}
-
-	public static Normal Getnormaluser(User user) {
-		Statement stmt;
-		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * From assignment3.normaluser where ID='" + user.getID() + "'");
-			if (rs.next() == true) {
-				Normaluser = new Normal(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
-						rs.getString(5), Integer.parseInt(rs.getString(6)));
-				return Normaluser;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Error in finding !!!");
-		return null;
 	}
 
 	public static ArrayList<RestaurantReport> GetReportForRestaurant(RestaurantManager restaurantManager, int month,
@@ -1303,75 +932,7 @@ public class mysqlConnection implements Initializable {
 		return ReportList;
 	}
 
-	public static String AddNewWorker(WorkerUser WorkerUser) throws SQLException {
-		Statement stmt;
-
-		stmt = conn.createStatement();
-		ResultSet rs = stmt
-				.executeQuery("SELECT * FROM assignment3.users where UserName='" + WorkerUser.getUserName() + "'");
-		if (rs.next() == true) {
-			return "UserNameAlreadyExists";
-		}
-		ResultSet rs1 = stmt.executeQuery("SELECT * FROM assignment3.users where ID='" + WorkerUser.getUserID() + "'");
-		if (rs1.next() == true) {
-			return "IDAlreadyExists";
-		}
-		String query = " insert into assignment3.users (ID,UserName,Password,UserType,IsLoggedIn,confirm,status)"
-				+ " values (?, ?, ?, ?, ?, ?, ?)";
-		PreparedStatement preparedStmt = conn.prepareStatement(query);
-		preparedStmt.setString(1, WorkerUser.getUserID());
-		preparedStmt.setString(2, WorkerUser.getUserName());
-		preparedStmt.setString(3, WorkerUser.getPassword());
-		preparedStmt.setString(4, "Worker");
-		preparedStmt.setInt(5, 0);
-		preparedStmt.setInt(6, 1);
-		preparedStmt.setString(7, "Active");
-		preparedStmt.execute();
-
-		String query1 = " insert into assignment3.restaurantworker (ID,FirstName,LastName,Email,PhoneNumber,restaurantWorker)"
-				+ " values (?, ?, ?, ?, ?, ?)";
-		PreparedStatement preparedStmt1 = conn.prepareStatement(query1);
-		preparedStmt1.setString(1, WorkerUser.getUserID());
-		preparedStmt1.setString(2, WorkerUser.getFirstName());
-		preparedStmt1.setString(3, WorkerUser.getLastName());
-		preparedStmt1.setString(4, WorkerUser.getEmail());
-		preparedStmt1.setString(5, WorkerUser.getPhoneNumber());
-		preparedStmt1.setInt(6, WorkerUser.getIDRestaurant());
-		preparedStmt1.execute();
-		return "Updated";
-
-	}
-
-	public static void RemoveWorker(WorkerUser WorkerUser) throws SQLException {
-		PreparedStatement st, st1;
-		st = conn.prepareStatement("DELETE FROM assignment3.restaurantworker  WHERE ID = ?");
-		st.setString(1, WorkerUser.getUserID());
-		st.executeUpdate();
-		st1 = conn.prepareStatement("DELETE FROM assignment3.users WHERE ID = ?");
-		st1.setString(1, WorkerUser.getUserID());
-		st1.executeUpdate();
-	}
-
-	public static void EditWorker(WorkerUser WorkerUser) throws SQLException {
-		PreparedStatement ps, rs;
-
-		ps = conn.prepareStatement(
-				"UPDATE assignment3.restaurantworker SET FirstName= ?,LastName=?,Email=?,PhoneNumber=?  WHERE ID = ?");
-		ps.setString(1, WorkerUser.getFirstName());
-		ps.setString(2, WorkerUser.getLastName());
-		ps.setString(3, WorkerUser.getEmail());
-		ps.setString(4, WorkerUser.getPhoneNumber());
-		ps.setString(5, WorkerUser.getUserID());
-		ps.executeUpdate();
-		rs = conn.prepareStatement("UPDATE assignment3.users SET UserName= ?,Password=? WHERE ID = ?");
-		rs.setString(1, WorkerUser.getUserName());
-		rs.setString(2, WorkerUser.getPassword());
-		rs.setString(3, WorkerUser.getUserID());
-		rs.executeUpdate();
-
-	}
-
-	public static String Create_acceptRestaurant(Resturaunt res) throws SQLException {
+	public static void Create_acceptRestaurant(Resturaunt res) {
 		PreparedStatement ps;
 		try {
 			String query1 = " insert into assignment3.restaurant (IDRestaurant,RestaurantName,location)"
@@ -1380,12 +941,15 @@ public class mysqlConnection implements Initializable {
 			ps.setInt(1, res.getResturauntID());
 			ps.setString(2, res.getResturaunt_Name());
 			ps.setString(3, res.getLocation());
-			ps.execute();
-		} catch (Exception e) {
-			return "This Id is Existes";
+			if (ps.executeUpdate() == 0) {
+				System.out.println("Table Update Error!");
+			} else {
+				System.out.println("Create new restaraunt " + res.getResturauntID());
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		return "updated";
 
 	}
 
@@ -1504,15 +1068,17 @@ public class mysqlConnection implements Initializable {
 		Statement stmt;
 		System.out.println("i am getting into login query");
 		try {
-			String query = " insert into assignment3.bussinessuser (ID,FirstName,LastName,PhoneNumber,Email,Company)"
-					+ " values (?, ?, ?, ?, ?, ?)";
+			String query = " insert into assignment3.bussinessuser (ID,FirstName,LastName,PhoneNumber,Email,W4C,Company,Confirm)"
+					+ " values (?, ?, ?, ?, ?, ?, ?)";
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
 			preparedStmt.setString(1, user.getID());
 			preparedStmt.setString(2, user.getFirstName());
 			preparedStmt.setString(3, user.getLastName());
 			preparedStmt.setString(4, user.getPhoneNumber());
 			preparedStmt.setString(5, user.getEmail());
-			preparedStmt.setString(6, user.getCompany());
+			preparedStmt.setFloat(6, user.getW4C());
+			preparedStmt.setString(7, user.getCompany());
+			preparedStmt.setInt(8, 0);
 			preparedStmt.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1608,21 +1174,6 @@ public class mysqlConnection implements Initializable {
 		return resList;
 	}
 
-	public static String companyChecker(String cname11) {
-		Statement stmt;
-		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM assignment3.company where confirm='" + 1 + "' and companyname='" + cname11 + "'");
-			if (rs.next() == true) {
-				return "companyExist";
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	public static W4CNormal getW4C(User user) {
 		Statement stmt;
 		W4CNormal w4c = null;
@@ -1652,80 +1203,10 @@ public class mysqlConnection implements Initializable {
 		return w4c;
 	}
 
-	public static ArrayList<Item> getallmaindish(int id, String type) throws SQLException {
-		Item Items = null;
-		ArrayList<Addition> addition = new ArrayList<Addition>();
-		Itemss = new ArrayList<Item>();
-		try {
-			Statement ps = conn.createStatement();
-			Statement ps1 = conn.createStatement();
-			ResultSet RS = ps.executeQuery("select * from assignment3.menu where IDRestaurant='" + id + "'");
-			while (RS.next()) {
-				int itemid = RS.getInt(2);
-				ResultSet RS1 = ps1.executeQuery("SELECT * From assignment3.item where Item_ID='" + itemid + "'");
-				if (RS1.next()) {
-					String cat = RS1.getString("category");
-					Category c = Category.valueOf(cat.toString());
-					addition = GetAllAddition(itemid);
-					Items = new Item(itemid, RS1.getString(2), Double.parseDouble(RS1.getString(3)),
-							(ArrayList<Addition>) addition, Integer.parseInt(RS.getString(3)), c);
-					Items.setCate(cat);
-					Itemss.add(Items);
-
-				}
-			}
-			return Itemss;
-		} catch (SQLException e) {
-// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public static ArrayList<Addition> GetAllAddition(int itemid) throws SQLException {
-		ArrayList<Addition> addition = new ArrayList<Addition>();
-		Addition add;
-		Statement ps = conn.createStatement();
-		ResultSet RS = ps.executeQuery("select * from assignment3.item_addition where Item_ID='" + itemid + "'");
-		while (RS.next()) {
-			add = new Addition(RS.getString(2));
-			addition.add(add);
-			System.out.println(add + "im here");
-		}
-		return addition;
-	}
-
-	public static ArrayList<Item> getallitems(int id) throws SQLException {
-		Item Items = null;
-
-		AllItems = new ArrayList<Item>();
-		try {
-			Statement ps = conn.createStatement();
-			Statement ps1 = conn.createStatement();
-			ResultSet RS = ps.executeQuery("select * from assignment3.menu where IDRestaurant='" + id + "'");
-			while (RS.next()) {
-				int itemid = RS.getInt(2);
-				ResultSet RS1 = ps1.executeQuery("SELECT * From assignment3.item where Item_ID='" + itemid + "'");
-				if (RS1.next()) {
-					Items = new Item(itemid, RS1.getString(2), Double.parseDouble(RS1.getString(3)),
-							Integer.parseInt(RS.getString(3)));
-					System.out.print(Items);
-					AllItems.add(Items);
-
-				}
-			}
-			return AllItems;
-		} catch (SQLException e) {
-// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	public static void generate_qr(String image_name, String qrCodeData) {
 		try {
 			System.out.println(image_name + " " + qrCodeData);
-			String filePath = "C:\\" + image_name + ".png";
+			String filePath = "D:\\" + image_name + ".png";
 			String charset = "UTF-8"; // or "ISO-8859-1"
 			Map<EncodeHintType, ErrorCorrectionLevel> hintMap = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
 			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);

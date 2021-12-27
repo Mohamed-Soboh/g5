@@ -30,9 +30,12 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import client.ChatClient;
+import client.ClientController;
 import client.ClientUI;
+import common.BussinessUser;
 import common.Messages;
 import common.MessagesClass;
+import common.User;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -48,77 +51,54 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-/**
- * @author moham
- *
- */
 public class NormalUserHomePageController implements Initializable {
 
+	@FXML
+	private Text username;
 
-    /**
-     * name is a text to put user name
-     */
-    @FXML
-    private Text name;
-	/**
-	 * use it to frozen and active member if frozen can't use it 
-	 */
 	@FXML
 	private Button new_order_btn;
+	
+	@FXML
+    private Button QR_Btn;
 
 	@FXML
 	private TextField w4ctxt;
 
-	/**
-	 * clock text
-	 */
 	@FXML
-    private Text clock;
+	private Text balance;
 
-	/**
-	 * in clock use
-	 */
+    @FXML
+    private Text errtxt;
+    @FXML
+    private ImageView QRimage;
+    
+	@FXML
+	private Text clock = new Text();
 	public static String sClock;
-
-    /**
-     * status of normal user
-     */
-    @FXML
-    private Text status;
-    /**
-     * path text
-     */
-    @FXML
-    private Text pathtext;
+	static BussinessUser Bussinessuser;
+	ClientController chat;
+	public static Stage homePageStage;
 	@FXML
 	private Button ext_home_page_btn;
 
-	/**
-	 * @param event action of buttons
-	 * @throws Exception
-	 * return to login page (back)
-	 */
 	@FXML
 	void logoutbtn(ActionEvent event) throws Exception {
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.close();
-		/**send to server to change the islogeed in in DB*/
-		ClientUI.chat.accept(new MessagesClass(Messages.updateStatus, ChatClient.user,0));
+		ClientUI.chat.accept(new MessagesClass(Messages.updateStatus, ChatClient.user));
 		LogInForm aFrame = new LogInForm();
 		Stage primaryStage = new Stage();
 		aFrame.start1(primaryStage);
 	}
 
-	/**
-	 * @param event action of new order bt 
-	 * @throws IOException
-	 * this method used after we check the w4c if correct ->can execute new order
-	 */
 	@FXML
 	void neworder(ActionEvent event) throws IOException {
 		String w4c = (String) w4ctxt.getText();
@@ -126,23 +106,24 @@ public class NormalUserHomePageController implements Initializable {
 			MessagesClass msg = new MessagesClass(Messages.W4C, ChatClient.user);
 			ClientUI.chat.accept(msg);
 		} else {
-			/** need to enter text here to client to enter w4c details */
-			System.out.println("enter w4c details");
+			// need to enter text here to client to enter w4c details
+			errtxt.setText("enter w4c details");
 			return;
 		}
 		if (Integer.valueOf(w4c).equals(ChatClient.w4c.getCode())) {
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.close();
+			homePageStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			homePageStage.hide();
 			Stage primaryStage = new Stage();
 			ResturauntMenuController RMC = new ResturauntMenuController();
 			RMC.start(primaryStage);
 		} else {
-			/** print text to user "w4c does not match"*/
-			System.out.println("w4c does not match");
+			// print text to user "w4c does not match"
+			errtxt.setText("w4c does not match");
 			return;
 		}
 	}
-
+	
+	//read image of QR code
 	public static String readQRCode(String filePath, String charset, Map hintMap)
 			throws FileNotFoundException, IOException, NotFoundException {
 		BinaryBitmap binaryBitmap = new BinaryBitmap(
@@ -151,6 +132,7 @@ public class NormalUserHomePageController implements Initializable {
 		return qrCodeResult.getText();
 	}
 
+	//get path of file example -> "C:\Program Files\..."
 	private String getFilePath() {
 		String path = "";
 		JFileChooser j = new JFileChooser();
@@ -165,6 +147,7 @@ public class NormalUserHomePageController implements Initializable {
 	}
 
 	@FXML
+	//Import QR image from users Computer
 	void QR_Import(ActionEvent event) {
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.hide();
@@ -178,7 +161,10 @@ public class NormalUserHomePageController implements Initializable {
 			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 			try {
 				String code = readQRCode(filePath, charset, hintMap);
-				w4ctxt.setText(code);
+				FileInputStream input = new FileInputStream(filePath);
+				Image image = new Image(input);
+				 QRimage.setImage(image); 
+				  w4ctxt.setText(code);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -201,41 +187,37 @@ public class NormalUserHomePageController implements Initializable {
 		ClientUI.chat.accept(msg1);
 	}
 
-	
-
-	/**
-	 * @param primaryStage to open normal homepage gui
-	 * @throws Exception
-	 * this start method to appear the normalhomepage gui
-	 */
 	public void start(Stage primaryStage) throws Exception {
-		
 		Parent root = FXMLLoader.load(getClass().getResource("/gui/NormalUserHomePage.fxml"));
 		Scene scene = new Scene(root);
-		primaryStage.setTitle("normal user");
+		primaryStage.setTitle("Home Page");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
 
-	/**
-	 *an initializer is a block of code that has no associated name or data type and is placed outside of any method
-	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		/**get all the information about this normal user*/
-		MessagesClass msg = new MessagesClass(Messages.getnormaluser, ChatClient.user);
-		ClientUI.chat.accept(msg);
-        pathtext.setText("LogIn->NormalPage");
-        System.out.println(ChatClient.user.getFirstname());
-        name.setText(ChatClient.normaluser.getFirstName());
-		status.setText(ChatClient.user.getStatus());
-		
-		if(ChatClient.user.getStatus().equals("Frozen"))
-		{
+		if (TypeOfOrderController.shared == true) {
+			chat = new ClientController(FirstPageController.ip, 5555);
+			ClientUI.chat = chat;
+		}
+		if (ChatClient.user.getUserType().equals("Normal")) {
+			MessagesClass msg = new MessagesClass(Messages.GetNormalUser, ChatClient.user);
+			ClientUI.chat.accept(msg);
+			username.setText(ChatClient.normaluser.getFirstName());
+		}
+
+		if (ChatClient.user.getUserType().equals("Bussiness")) {
+			MessagesClass msg = new MessagesClass(Messages.GetbissnessUser, ChatClient.user);
+			ClientUI.chat.accept(msg);
+			username.setText(
+					ChatClient.Bussinessuser.getFirstName() + " From " + ChatClient.Bussinessuser.getCompany());
+			balance.setText("Wallet Balance: " + String.valueOf(ChatClient.Bussinessuser.getW4c().getMoney())+"$");
+		}
+		if (ChatClient.user.getStatus().equals("Frozen")) {
 			new_order_btn.setDisable(true);
-			
- 		}
-		
+		}
+
 		w4ctxt.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -244,7 +226,7 @@ public class NormalUserHomePageController implements Initializable {
 				}
 			}
 		});
-/*put clock in gui of normalhome page*/
+
 		final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		final Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 			@Override
@@ -255,7 +237,7 @@ public class NormalUserHomePageController implements Initializable {
 		}));
 
 		timeline.setCycleCount(Animation.INDEFINITE);
-		timeline.play();/**/
+		timeline.play();
 	}
 
 }

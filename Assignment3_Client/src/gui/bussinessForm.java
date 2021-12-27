@@ -16,7 +16,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -26,11 +25,10 @@ public class bussinessForm implements Initializable {
 	private Text balance;
 	static BussinessUser Bussinessuser;
 	@FXML
-    private Button newOrder;
+	private Text username;
 
-    @FXML
-    private Text username;
 	public void start(Stage primaryStage) throws Exception {
+		System.out.println("555");
 		Parent root = FXMLLoader.load(getClass().getResource("/gui/bussinessHome.fxml"));
 		Scene scene = new Scene(root);
 		primaryStage.setTitle("bussiness page");
@@ -47,7 +45,7 @@ public class bussinessForm implements Initializable {
 	void logout(ActionEvent event) {
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.close();
-		ClientUI.chat.accept(new MessagesClass(Messages.updateStatus, ChatClient.user,0));
+		ClientUI.chat.accept(new MessagesClass(Messages.updateStatus, ChatClient.user));
 		LogInForm aFrame = new LogInForm(); 
 		Stage primaryStage = new Stage();
 		try {
@@ -65,17 +63,12 @@ public class bussinessForm implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		if(ChatClient.user.getStatus().equals("Frozen"))
-			newOrder.setDisable(true);
-		
 		
 		MessagesClass msg = new MessagesClass(Messages.GetbissnessUser, ChatClient.user);
 		ClientUI.chat.accept(msg);
 		Bussinessuser=ChatClient.Bussinessuser;
 		username.setText(Bussinessuser.getFirstName()+" From "+Bussinessuser.getCompany());
-		System.out.println(ChatClient.user.getStatus().equals("Frozen")+" false");
-		System.out.println(!ChatClient.user.getStatus().equals("Frozen")+" true");
-		 
+		balance.setText(""+Bussinessuser.getW4C());
 	}
 
 }

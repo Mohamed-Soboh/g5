@@ -7,19 +7,22 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.paint.LinearGradient?>
-<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="466.0" prefWidth="765.0" style="-fx-background-color: #555555;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.NormalUserHomePageController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #555555;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.NormalUserHomePageController">
    <children>
-      <Text fx:id="username" fill="WHITE" layoutX="147.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="164.6708984375">
+      <Label layoutX="48.0" layoutY="38.0" prefHeight="35.0" prefWidth="533.0" text="Welcome," textFill="#eb8b00">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <Text fx:id="username" fill="#eb8b00" layoutX="162.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="495.6708984375">
          <font>
             <Font size="24.0" />
          </font>
       </Text>
-      <Button fx:id="new_order_btn" layoutX="299.0" layoutY="179.0" mnemonicParsing="false" onAction="#neworder" prefHeight="54.0" prefWidth="340.0" style="-fx-background-color: #d39b4b;" text="New Order" textFill="WHITE">
+      <Button fx:id="new_order_btn" layoutX="226.0" layoutY="201.0" mnemonicParsing="false" onAction="#neworder" prefHeight="54.0" prefWidth="334.0" styleClass="button-NewOrder" stylesheets="@Buttons1.css" text="New Order" textFill="WHITE">
          <effect>
             <InnerShadow blurType="ONE_PASS_BOX" />
          </effect>
@@ -27,7 +30,7 @@
             <Font name="System Bold" size="23.0" />
          </font>
       </Button>
-      <Button layoutX="299.0" layoutY="265.0" mnemonicParsing="false" onAction="#QR_Import" prefHeight="54.0" prefWidth="340.0" style="-fx-background-color: #d39b4b;" text="QR Import" textFill="WHITE">
+      <Button fx:id="QR_Btn" layoutX="225.0" layoutY="284.0" mnemonicParsing="false" onAction="#QR_Import" prefHeight="54.0" prefWidth="348.0" styleClass="button-NewOrder" stylesheets="@Buttons1.css" text="QR Import" textFill="WHITE">
          <effect>
             <InnerShadow blurType="ONE_PASS_BOX" />
          </effect>
@@ -35,68 +38,32 @@
             <Font name="System Bold" size="23.0" />
          </font>
       </Button>
-      <TextField fx:id="w4ctxt" layoutX="376.0" layoutY="112.0" promptText="W4C code" />
-      <Button fx:id="QR_create" layoutX="438.0" layoutY="361.0" mnemonicParsing="false" onAction="#QR_Create" text="export" />
-      <AnchorPane prefHeight="466.0" prefWidth="181.0" style="-fx-background-color: #d39b4b;">
-         <children>
-            <Label layoutX="1.0" layoutY="145.0" prefHeight="35.0" prefWidth="71.0" text="Status:">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </Label>
-            <Label layoutX="3.0" layoutY="105.0" prefHeight="35.0" prefWidth="71.0" text="Name:">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </Label>
-            <Text fx:id="status" fill="WHITE" layoutX="70.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="105.99999368190765">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Text>
-            <Label layoutX="25.0" layoutY="61.0" prefHeight="35.0" prefWidth="106.0" text="Welcom">
-               <font>
-                  <Font name="System Bold" size="24.0" />
-               </font>
-            </Label>
-            <Text fx:id="clock" layoutX="8.0" layoutY="447.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="164.6709069237113" />
-            <Text fx:id="name" layoutX="70.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="105.99999368190765">
-               <font>
-                  <Font size="24.0" />
-               </font>
-               <fill>
-                  <LinearGradient endX="1.0" endY="1.0">
-                     <stops>
-                        <Stop color="WHITE" />
-                        <Stop color="WHITE" offset="1.0" />
-                     </stops>
-                  </LinearGradient>
-               </fill>
-            </Text>
-         </children>
-      </AnchorPane>
-      <AnchorPane layoutY="-4.0" prefHeight="35.0" prefWidth="765.0" style="-fx-background-color: #555555;">
-         <children>
-            <Button layoutX="694.0" mnemonicParsing="false" onAction="#logoutbtn" prefHeight="45.0" prefWidth="71.0" style="-fx-background-color: #555555;">
-               <graphic>
-                  <ImageView fitHeight="44.0" fitWidth="47.0">
-                     <image>
-                        <Image url="icons/transparent-log-out-symbol-icon-arrows-icon-logout-icon-60748f03724088.284782351618251523468.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Text fx:id="pathtext" fill="WHITE" layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="366.6708984375">
-               <font>
-                  <Font size="17.0" />
-               </font>
-            </Text>
-         </children>
-      </AnchorPane>
-      <Text fill="WHITE" layoutX="377.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Normal Page">
+      <Button layoutX="676.0" layoutY="21.0" mnemonicParsing="false" onAction="#logoutbtn" prefHeight="35.0" prefWidth="61.0" style="-fx-background-color: #555555;">
+         <graphic>
+            <ImageView fitHeight="56.0" fitWidth="58.0">
+               <image>
+                  <Image url="icons/transparent-log-out-symbol-icon-arrows-icon-logout-icon-60748f03724088.284782351618251523468.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <TextField fx:id="w4ctxt" layoutX="317.0" layoutY="143.0" promptText="W4C code" />
+      <Text fx:id="clock" fill="#eb8b00" layoutX="48.0" layoutY="490.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="355.9999945163727">
          <font>
-            <Font name="Arial Nova Bold" size="28.0" />
+            <Font size="24.0" />
          </font>
       </Text>
+      <Button fx:id="QR_create" layoutX="56.0" layoutY="507.0" mnemonicParsing="false" onAction="#QR_Create" text="export" />
+      <Text fx:id="balance" fill="#eb8b00" layoutX="48.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
+      <Text fx:id="errtxt" fill="RED" layoutX="316.0" layoutY="385.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="377.0">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
+      <ImageView fx:id="QRimage" fitHeight="162.0" fitWidth="214.0" layoutX="303.0" layoutY="396.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>

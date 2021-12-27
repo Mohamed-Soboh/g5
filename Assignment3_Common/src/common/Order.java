@@ -1,6 +1,7 @@
 package common;
 
 import java.io.Serializable;
+import java.sql.Time;
 import java.util.ArrayList;
 
 public class Order implements Serializable {
@@ -10,23 +11,6 @@ public class Order implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private int orderNum;
-	public Order(int orderNum, double totalPrice,  String CurrentDateAndTime,String pickupTime,String userid) {
-		super();
-		this.orderNum = orderNum;
-		TotalPrice = totalPrice;
-		this.pickupTime = pickupTime;
-		this.CurrentDateAndTime=CurrentDateAndTime;
-		this.userid=userid;
-	}
-
-	public String getUserid() {
-		return userid;
-	}
-
-	public void setUserid(String userid) {
-		this.userid = userid;
-	}
-
 	public void setOrderNum(int orderNum) {
 		this.orderNum = orderNum;
 	}
@@ -41,8 +25,7 @@ public class Order implements Serializable {
 	private String minute;
 	private int month;
 	private int year;
-	private String userid;
-private String pickupTime;
+
 	public Order(int orderNum,Resturaunt res, User user, String currentDateAndTime, double totalPrice, ArrayList<Item> items,
 			String date, String hour, String minute) {
 		this.orderNum=orderNum;
@@ -54,15 +37,6 @@ private String pickupTime;
 		this.date = date;
 		this.hour = hour;
 		this.minute = minute;
-		this.pickupTime=date+"-"+hour+":"+minute;
-	}
-
-	public String getPickupTime() {
-		return pickupTime;
-	}
-
-	public void setPickupTime(String pickupTime) {
-		this.pickupTime = pickupTime;
 	}
 
 	public Order(Resturaunt res,ArrayList<Item> items,int month,int year)
@@ -72,8 +46,6 @@ private String pickupTime;
 		this.month=month;
 		this.year=year;
 	}
-
-	
 
 	public int getMonth() {
 		return month;

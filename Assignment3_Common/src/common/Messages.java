@@ -11,9 +11,24 @@ W4C,
 AddResturauntRequest,
 ResturauntRequestSent,
 GetAllRestaurants,
-
+error,
 QRgetW4C,
 QRcreateW4C,
+
+//orders
+getIND,
+getOrderID,
+newOrder,
+newDelivery,
+order_items_additions,
+soldItems,
+updateW4CforBussiness,
+partnersGroupNumber,
+sharedGroup,
+getGroupNumber,
+updateTable,
+joinGroup,
+closeGroupDelivery,
 
 Login,loginSucceeded,
 loginerror,updateStatus,
@@ -22,10 +37,11 @@ Disconnected,GettempData,
 deleteid,
 CreateNewNormalAccountWithVisa,
 forgetPassword,
-
-UserNameAlreadyExists,
+CreateNewNormalAccountWithOutVisa
+,InsertNewNormalAccountWithOutVisa
+,UserNameAlreadyExists,
 IDAlreadyExists,
- 
+CreateNewBussinessAccont,
 getthenormalendifainedacoount,
 acceptnewnormaluser,
 ChangeUserPermissions
@@ -35,62 +51,19 @@ updateStatusofusers,
 getallrestaurant,
 Createaccepttresturaunt,
 updateandinsidebussinesstousers,
-ReportForManager, RestaurantReport, 
-ReportList, 
-//get managers
-GetBranchManager, 
+ReportForManager, RestaurantReport, getRestaurantManager, GotRestaurantManager,
+ReportList, GetBranchManager, 
 GotBranchManager, 
 GetHRManager, 
-GotHRManager,
-GetCEO,
-getRestaurantManager,
-GotRestaurantManager,
-getnormaluser, 
-
+GotHRManager, 
 getrestaurantname,
-getRestaurantWorker,
-GetbissnessUser,
+getRestaurantWorker, 
 clientConnected, 
+GetbissnessUser, 
 insidealldatafromBiteMeDB,
 GotW4C,
- /////add workers
-GetAllWorker, 
-AddNewWorker, 
-deleteworker,
-editworkers,
-//add and accept account normal and business
-CreateNewBussinessAccontWithVisa,
-CreateNewBussinessAccont,
-CreateNewNormalAccountWithOutVisa
-,InsertNewNormalAccountWithOutVisa,
-AddNewUserwithvisa,
-
-
-//items (edit order) 
-GetAllitems, 
-GetAllitemsfromitem,
-//delete all data
-GetAllUsersFromUsersTable,
-///get all company
-//add new normaluser
-GetallAvailableCompany, AddNewUser,
-
-//items
-UpdateItem,
-RemoveItem, AddItems, GetAllItems,
-RemoveItemAddition,
-//check company from hr to branch manager
-CheckCompany,
-CompanyRequest,
-CompanyConfirmed, 
-getCompanyList, 
-
-//orders
-GetAllOreders, 
-GetOrderItems,
-getuser,   
-DeleteOrder,
-CheckDelivery,
+GetCEO,
+GetNormalUser
 
 
 }

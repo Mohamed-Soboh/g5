@@ -26,7 +26,7 @@
 				<Font size="22.0" />
 			</font>
 		</Text>
-		<Button fx:id="newOrder" layoutX="219.0" layoutY="163.0" mnemonicParsing="false" onAction="#newOrder" prefHeight="54.0" prefWidth="340.0" style="-fx-background-color: #d39b4b;" text="New Order" textFill="WHITE">
+		<Button layoutX="219.0" layoutY="163.0" mnemonicParsing="false" onAction="#newOrder" prefHeight="54.0" prefWidth="340.0" style="-fx-background-color: #d39b4b;" text="New Order" textFill="WHITE">
 			<effect>
 				<InnerShadow blurType="ONE_PASS_BOX" />
 			</effect>

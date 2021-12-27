@@ -1,10 +1,15 @@
 package common;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import javafx.scene.control.CheckBox;
 
-public class ViewOrderDetails {
+public class ViewOrderDetails implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private CheckBox[] CB;
 	private Item item;
 
