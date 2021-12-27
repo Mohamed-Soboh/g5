@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.CreateNewBussinessAccount">
+	<children>
+		<AnchorPane prefHeight="715.0" prefWidth="853.0" style="-fx-background-color: #555555;">
+			<children>
+      		<TextField fx:id="UserID" layoutX="137.0" layoutY="182.0" promptText="User ID" />
+				<TextField fx:id="Amount" layoutX="582.0" layoutY="189.0" promptText="Monthly Package " />
+				<Label layoutX="215.0" layoutY="58.0" prefHeight="47.0" prefWidth="433.0" text="Create New Bussiness Account " textFill="WHITE">
+					<font>
+						<Font name="Andalus" size="34.0" />
+					</font>
+				</Label>
+				<TextField fx:id="FamilyName" layoutX="137.0" layoutY="273.0" promptText="Family Name" />
+				<TextField fx:id="FirstName" layoutX="137.0" layoutY="228.0" promptText="First Name" />
+				<TextField fx:id="Email" layoutX="137.0" layoutY="319.0" prefHeight="31.0" prefWidth="145.0" promptText="E-mail" />
+				<ComboBox fx:id="EmailType" layoutX="289.0" layoutY="319.0" prefHeight="31.0" prefWidth="120.0" />
+				<TextField fx:id="PhoneNumber" layoutX="137.0" layoutY="367.0" promptText="Phone Number" />
+				<TextField fx:id="PasswordC" layoutX="137.0" layoutY="496.0" promptText="Confirm Password" />
+				<TextField fx:id="Password" layoutX="137.0" layoutY="452.0" promptText="Password" />
+				<TextField fx:id="Company" layoutX="582.0" layoutY="266.0" promptText="Employee Company" />
+            <TextField fx:id="W4C" layoutX="582.0" layoutY="228.0" promptText="W4C" />
+            <CheckBox fx:id="PutVisa" layoutX="582.0" layoutY="321.0" mnemonicParsing="false" onAction="#checkboxbt" text="Add Visa Card" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </CheckBox>
+            <TextField fx:id="CardholderName" layoutX="582.0" layoutY="367.0" promptText="Cardholder Name" />
+            <TextField fx:id="CardNumber" layoutX="582.0" layoutY="407.0" promptText="Card Number" />
+            <ComboBox fx:id="Month" layoutX="582.0" layoutY="452.0" prefHeight="31.0" prefWidth="99.0" promptText="Month" />
+            <ComboBox fx:id="Year" layoutX="694.0" layoutY="452.0" prefHeight="31.0" prefWidth="92.0" promptText="Year" />
+            <TextField fx:id="CVV" layoutX="582.0" layoutY="496.0" prefHeight="31.0" prefWidth="99.0" promptText="CVV" />
+            <Text fx:id="pathtext" fill="#eb8b00" layoutX="11.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="397.6708984375">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Text>
+      		<Button layoutX="660.0" layoutY="614.0" mnemonicParsing="false" onAction="#submitBt" prefHeight="52.0" prefWidth="99.0" style="-fx-background-color: green;" text="Submit" textFill="WHITE">
+      			<font>
+      				<Font name="System Bold Italic" size="21.0" />
+      			</font>
+      		</Button>
+      		<Button layoutX="175.0" layoutY="616.0" mnemonicParsing="false" onAction="#BackBt" prefHeight="52.0" prefWidth="112.0" text="Back">
+      			<font>
+      				<Font name="System Bold Italic" size="21.0" />
+      			</font>
+      		</Button>
+			</children>
+		</AnchorPane>
+		<TextField fx:id="Username" layoutX="139.0" layoutY="411.0" promptText="User name" />
+		<Text fx:id="ErrorText" fill="RED" layoutX="251.0" layoutY="561.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="432.9999951124191">
+			<font>
+				<Font name="System Bold Italic" size="21.0" />
+			</font>
+		</Text>
+	</children>
+</AnchorPane>

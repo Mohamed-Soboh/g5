@@ -1,0 +1,56 @@
+#button-back {
+	-fx-background-color: #d39b4b;
+	-fx-background-radius: 30 30 30 30;
+	-fx-font-size: 25;
+}
+
+#button-back:hover {
+	-fx-background-color: #C48320;
+	-fx-background-radius: 30 30 30 30;
+	-fx-font-size: 25;
+}
+
+#button-back:pressed {
+	-fx-background-color: #ff0000;
+	-fx-background-radius: 30 30 30 30;
+	-fx-font-size: 25;
+}
+
+#button-submit {
+	-fx-background-color: #d39b4b;
+	-fx-background-radius: 30 30 30 30;
+	-fx-font-size: 25;
+}
+
+#button-submit:hover {
+	-fx-background-color: #C48320;
+	-fx-background-radius: 30 30 30 30;
+	-fx-font-size: 25;
+}
+
+#button-submit:pressed {
+	-fx-background-color: green;
+	-fx-background-radius: 30 30 30 30;
+	-fx-font-size: 25;
+}
+
+#button-restaurant {
+	-fx-background-color: #d39b4b;
+	-fx-background-radius: 30 30 30 30;
+	-fx-pref-height: 70px;
+	-fx-pref-width: 250px;
+	-fx-font-size: 25;
+}
+
+#button-restaurant:hover {
+	-fx-background-color: #C48320;
+	-fx-background-radius: 30 30 30 30;
+	-fx-pref-height: 75px;
+	-fx-pref-width: 255px;
+	-fx-font-size: 30;
+}
+
+#button-restaurant:pressed {
+	-fx-background-color: #C48330;
+	-fx-background-radius: 30 30 30 30;
+}

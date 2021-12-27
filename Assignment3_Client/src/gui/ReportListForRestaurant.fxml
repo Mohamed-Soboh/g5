@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0"
+	prefWidth="1063.0" xmlns="http://javafx.com/javafx/8.0.171"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="gui.ReportListForRestaurantController">
+	<children>
+		<AnchorPane prefHeight="713.0" prefWidth="1063.0"
+			style="-fx-background-color: #555555;">
+			<children>
+				<TableView fx:id="ReportTbl" layoutX="55.0" layoutY="92.0"
+					prefHeight="429.0" prefWidth="675.0">
+					<columns>
+						<TableColumn fx:id="ItemIDCLM" prefWidth="121.0"
+							text="ItemID" />
+						<TableColumn fx:id="ItemNameCLM" prefWidth="127.0"
+							text="Item Name" />
+						<TableColumn fx:id="QuantityCLM" prefWidth="116.0"
+							text="Quantity" />
+						<TableColumn fx:id="Price1CLM" prefWidth="116.0"
+							text="Price1" />
+						<TableColumn fx:id="SoldCLM" prefWidth="75.0"
+							text="Sold" />
+						<TableColumn fx:id="InComeCLM" prefWidth="116.0"
+							text="InCome" />
+					</columns>
+				</TableView>
+				<Button fx:id="Converter" layoutX="562.0" layoutY="625.0"
+					mnemonicParsing="false" onAction="#ConertBtn" prefHeight="54.0"
+					prefWidth="156.0" text="Convert to PDF" />
+				<Button fx:id="Back" layoutX="64.0" layoutY="625.0"
+					mnemonicParsing="false" onAction="#BackBt" prefHeight="54.0"
+					prefWidth="128.0" text="Back" />
+				<Text fx:id="TextID" fill="#e10000" layoutX="237.0"
+					layoutY="58.0" strokeType="OUTSIDE" strokeWidth="0.0"
+					wrappingWidth="457.6708984375">
+					<font>
+						<Font name="System Bold Italic" size="18.0" />
+					</font>
+				</Text>
+				<Text fx:id="totalwin" fill="#00ff59" layoutX="64.0"
+					layoutY="584.0" strokeType="OUTSIDE" strokeWidth="0.0"
+					wrappingWidth="420.3046875">
+					<font>
+						<Font name="System Bold" size="20.0" />
+					</font>
+				</Text>
+				<ComboBox fx:id="Year" layoutX="763.0" layoutY="291.0"
+					prefHeight="31.0" prefWidth="112.0" promptText="Year" />
+				<ComboBox fx:id="Month" layoutX="914.0" layoutY="291.0"
+					prefHeight="31.0" prefWidth="103.0" promptText="Month" />
+				<Button fx:id="GetReport" layoutX="917.0" layoutY="388.0"
+					mnemonicParsing="false" onAction="#GetReportBt" prefHeight="31.0"
+					prefWidth="103.0" text="Get report">
+					<font>
+						<Font name="System Bold Italic" size="15.0" />
+					</font>
+				</Button>
+				<Text fx:id="Errorinput" fill="RED" layoutX="771.0"
+					layoutY="486.0" strokeType="OUTSIDE" strokeWidth="0.0"
+					wrappingWidth="285.6708984375">
+					<font>
+						<Font size="18.0" />
+					</font>
+				</Text>
+			</children>
+		</AnchorPane>
+	</children>
+</AnchorPane>

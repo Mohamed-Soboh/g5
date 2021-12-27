@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="679.0" prefWidth="873.0" style="-fx-background-color: #555555;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.DeliveryInfoController">
+   <children>
+      <DatePicker fx:id="datetxt" layoutX="313.0" layoutY="343.0" prefHeight="31.0" prefWidth="188.0" promptText="Select your date" />
+      <Text fill="#d39b4b" layoutX="176.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delivery information">
+         <font>
+            <Font name="Gill Sans MT" size="55.0" />
+         </font>
+      </Text>
+      <TextField fx:id="nametxt" layoutX="314.0" layoutY="144.0" promptText="Name" />
+      <TextField fx:id="adresstxt" layoutX="314.0" layoutY="246.0" promptText="Address" />
+      <TextField fx:id="phonenumbertxt" layoutX="314.0" layoutY="194.0" promptText="Phone number" />
+      <ComboBox fx:id="deliverytxt" layoutX="314.0" layoutY="294.0" prefWidth="150.0" promptText="Delivery type" />
+      <TextArea fx:id="opentxt" layoutX="226.0" layoutY="449.0" prefHeight="85.0" prefWidth="362.0" promptText="Enter your Description:" />
+      <Label layoutX="226.0" layoutY="626.0" text="*Delivery costs may change according to your delivery type" textFill="#ff2727" />
+      <Button layoutX="100.0" layoutY="560.0" mnemonicParsing="false" onAction="#BackBtn" prefHeight="52.0" prefWidth="126.0" styleClass="button1" stylesheets="@../../../../../OneDrive/שולחן%20העבודה/gui/Button.css" text="Back" textFill="WHITE">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Button>
+      <Button layoutX="545.0" layoutY="560.0" mnemonicParsing="false" onAction="#goToPayment" prefHeight="52.0" prefWidth="188.0" stylesheets="@../../../../../OneDrive/שולחן%20העבודה/gui/Button.css" text="Go to payment" textFill="WHITE">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Button>
+      <ComboBox fx:id="hourtxt" layoutX="314.0" layoutY="393.0" prefHeight="31.0" prefWidth="84.0" promptText="hour" />
+      <ComboBox fx:id="minutetxt" layoutX="414.0" layoutY="393.0" prefHeight="31.0" prefWidth="106.0" promptText="minutes" />
+      <Label layoutX="259.0" layoutY="398.0" text="Time:" textFill="#d39b4b">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

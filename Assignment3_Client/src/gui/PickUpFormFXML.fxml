@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #555555;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PickUpFormController">
+   <children>
+      <Text fill="#d39b4b" layoutX="190.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pickup information">
+         <font>
+            <Font name="Gill Sans MT" size="55.0" />
+         </font>
+      </Text>
+      <Button layoutX="86.0" layoutY="474.0" mnemonicParsing="false" onAction="#Back" prefHeight="52.0" prefWidth="126.0" stylesheets="Button.css" text="Back" textFill="WHITE">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Button>
+      <Button layoutX="516.0" layoutY="474.0" mnemonicParsing="false" onAction="#Go_to_payment" prefHeight="52.0" prefWidth="207.0" stylesheets="Button.css" text="Go to payment" textFill="WHITE">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Button>
+      <Text fx:id="errtxt" fill="RED" layoutX="276.0" layoutY="394.0" strokeType="OUTSIDE" strokeWidth="0.0" AnchorPane.leftAnchor="276.0" AnchorPane.rightAnchor="499.8125">
+         <font>
+            <Font size="32.0" />
+         </font>
+      </Text>
+      <DatePicker fx:id="datetxt" layoutX="288.0" layoutY="171.0" prefHeight="31.0" prefWidth="188.0" promptText="Select your date" />
+      <ComboBox fx:id="hourtxt" layoutX="274.0" layoutY="260.0" prefHeight="31.0" prefWidth="84.0" promptText="hour" />
+      <ComboBox fx:id="minutetxt" layoutX="382.0" layoutY="260.0" prefHeight="31.0" prefWidth="106.0" promptText="minutes" />
+      <Label layoutX="212.0" layoutY="262.0" text="Time:" textFill="#d39b4b">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
